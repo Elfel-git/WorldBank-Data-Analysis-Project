@@ -3,15 +3,15 @@ from pathlib import Path
 
 # Danh sách mã chỉ số khớp với yêu cầu của nhóm bạn
 INDICATORS = {
-    #"NY.ADJ.AEDU.GN.ZS": "Edu_Spending_GDP_raw.csv",
-    #"NY.GDP.PCAP.CD": "GDP_per_Capita_raw.csv",
-    #"SH.XPD.CHEX.GD.ZS": "Health_Spending_GDP_raw.csv",
-    #"IT.NET.USER.ZS": "Internet_Usage_raw.csv",
-    #"SE.PRM.CMPT.ZS": "Learning_Outcome_raw.csv",
-    #"SL.UEM.TOTL.ZS": "Unemployment_Rate_raw.csv",
-    'NE.GDI.FTOT.ZS': 'GFCF_GDP_raw.csv',
-    'SP.POP.GROW': 'Population_Growth_raw.csv',
-    'SL.TLF.TOTL.IN': 'Labor_Force_raw.csv',
+    "NY.ADJ.AEDU.GN.ZS": "Edu_Spending_GDP_raw.csv", # Chi tiêu cho giáo dục tính theo % thu nhập quốc gia 
+    "NY.GDP.PCAP.CD": "GDP_per_Capita_raw.csv", # Tổng sản phẩm quốc nội bình quân đầu người (Theo USD hiện giá)
+    "SH.XPD.CHEX.GD.ZS": "Health_Spending_GDP_raw.csv", # CHi tiêu y tế hiện hành so với GDP
+    "IT.NET.USER.ZS": "Internet_Usage_raw.csv", # Tỷ lệ người dùng Internet - Phân bố thường là đường cong chữ S trong quá trình phát triển một quốc gia 
+    "SE.PRM.CMPT.ZS": "Learning_Outcome_raw.csv", # Tỷ lệ hoàn thành bậc tiểu học 
+    "SL.UEM.TOTL.ZS": "Unemployment_Rate_raw.csv", # Tỷ lệ thất nghiệp, một số biến số có chu kỳ cao 
+    'NE.GDI.FTOT.ZS': 'GFCF_GDP_raw.csv', # Tỷ lệ hình thành vốn cố định sơ cấp trong GDP, thước đó vào tài sản cố định (nhà máy , hạ tầng )
+    'SP.POP.GROW': 'Population_Growth_raw.csv', # Tốc độ tăng trưởng dân số hằng năm 
+    'SL.TLF.TOTL.IN': 'Labor_Force_raw.csv', # Tổng lực lượng lao động . quy mô mẫu của quần thể tham gia vào hoạt động konh tế (bao gồm cả người đang làm việc, người đang tìm việc)
 }
 
 BASE_DIR = Path(__file__).resolve().parent

@@ -3,9 +3,9 @@ from pathlib import Path
 
 # Thêm 3 chỉ số quan trọng để bộ dữ liệu "xịn" hơn
 NEW_INDICATORS = {
-    "SP.POP.TOTL": "Population_Total_raw.csv",
-    "FP.CPI.TOTL.ZG": "Inflation_Rate_raw.csv",
-    "NE.TRD.GNFS.ZS": "Trade_Openness_GDP_raw.csv",
+    "SP.POP.TOTL": "Population_Total_raw.csv", # Tổng dân số - biến này có xu hướng tăng tuyến tính hoặc hàm mũ nhẹ nếu tăng đột ngột thì có thể là nhiễu hoặc thay đổi về địa giới hành chính 
+    "FP.CPI.TOTL.ZG": "Inflation_Rate_raw.csv", # Tỷ lệ lam phát (Theo chỉ số tiêu dùng CPI )
+    "NE.TRD.GNFS.ZS": "Trade_Openness_GDP_raw.csv", # Độ mở thương mại (Xuất khẩu + Nhập khẩu ) / GDP x 100 
 }
 
 BASE_DIR = Path(__file__).resolve().parent
