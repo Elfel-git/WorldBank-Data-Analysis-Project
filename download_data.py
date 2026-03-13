@@ -3,12 +3,15 @@ from pathlib import Path
 
 # Danh sách mã chỉ số khớp với yêu cầu của nhóm bạn
 INDICATORS = {
-    "NY.ADJ.AEDU.GN.ZS": "Edu_Spending_GDP_raw.csv",
-    "NY.GDP.PCAP.CD": "GDP_per_Capita_raw.csv",
-    "SH.XPD.CHEX.GD.ZS": "Health_Spending_GDP_raw.csv",
-    "IT.NET.USER.ZS": "Internet_Usage_raw.csv",
-    "SE.PRM.CMPT.ZS": "Learning_Outcome_raw.csv",
-    "SL.UEM.TOTL.ZS": "Unemployment_Rate_raw.csv",
+    #"NY.ADJ.AEDU.GN.ZS": "Edu_Spending_GDP_raw.csv",
+    #"NY.GDP.PCAP.CD": "GDP_per_Capita_raw.csv",
+    #"SH.XPD.CHEX.GD.ZS": "Health_Spending_GDP_raw.csv",
+    #"IT.NET.USER.ZS": "Internet_Usage_raw.csv",
+    #"SE.PRM.CMPT.ZS": "Learning_Outcome_raw.csv",
+    #"SL.UEM.TOTL.ZS": "Unemployment_Rate_raw.csv",
+    'NE.GDI.FTOT.ZS': 'GFCF_GDP_raw.csv',
+    'SP.POP.GROW': 'Population_Growth_raw.csv',
+    'SL.TLF.TOTL.IN': 'Labor_Force_raw.csv',
 }
 
 BASE_DIR = Path(__file__).resolve().parent
