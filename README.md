@@ -61,3 +61,66 @@ Dữ liệu bao gồm các nhóm biến chính sau:
 2. **Cài đặt thư viện:**
    ```bash
    pip install wbgapi pandas matplotlib seaborn
+
+
+
+   PHẦN 1: KẾT QUẢ "CHỤP X-QUANG" TẬP DỮ LIỆU HIỆN TẠI
+1. Tính đầy đủ (Completeness) - Cảnh báo đỏ ở năm 2024
+
+Phát hiện: Mặc dù số lượng dòng (266 quốc gia/khu vực) khớp nhau hoàn hảo ở cả 6 file, nhưng dữ liệu năm 2024 gần như là một "điểm mù".
+
+Cột Access to electricity năm 2024 trống 100% (thiếu 266/266).
+
+Cột Individuals using the Internet năm 2024 thiếu tới 184/266 (khoảng 70%).
+
+Đánh giá: Nếu bạn cố đưa năm 2024 vào mô hình học máy, toàn bộ các vector đặc trưng của các quốc gia sẽ bị rỗng ở đoạn cuối, khiến việc tính toán quỹ đạo (trajectory) bị gãy.
+
+2. Tính đa dạng & Sự phù hợp (Diversity & Relevance) - Lỗi sai cốt lõi
+
+Phát hiện: Bài toán yêu cầu phân tích "phân bổ nhân lực" và "tỷ trọng dịch vụ", nhưng bạn không hề có 2 biến số này. Bạn đang có Điện, Internet, Nông nghiệp, Tín dụng, FDI, và GDP.
+
+Đánh giá: Bạn không thể dùng dữ liệu Nông nghiệp hay Điện để nội suy ra tỷ trọng Dịch vụ được. Đây là lỗi sai chí mạng về nghiệp vụ (Domain Knowledge) mà Hội đồng chấm đồ án sẽ bắt lỗi ngay lập tức.
+
+3. Tính chính xác (Accuracy) - Nhiễu cực lớn ở FDI
+
+Phát hiện: Khi quét các điểm bất thường (Outliers - sử dụng phương pháp Interquartile Range), tôi thấy:
+
+Biến FDI inflows có khoảng giá trị quá biến động: Nhỏ nhất là -1303, lớn nhất là 1709, với số lượng Outliers chiếm tới 11%.
+
+Dữ liệu FDI này có thể bị bóp méo bởi các sự kiện như đại dịch, sụp đổ tài chính, hoặc các quốc gia thiên đường thuế.
+
+Đánh giá: Nếu đưa thẳng FDI vào thuật toán tính khoảng cách (để tìm quốc gia tương đồng 85%), mô hình sẽ bị "đánh lừa" bởi các năm dòng tiền tăng/giảm đột biến, dẫn đến việc ghép sai quốc gia tham chiếu cho Việt Nam.
+
+4. Tính nhất quán (Consistency) - Xung đột thang đo
+
+Phát hiện: Dữ liệu Internet dao động từ 0 đến 100, nhưng GDP per capita lại nhảy từ 803 USD lên tới mức cao nhất là 174,569 USD.
+
+Đánh giá: Các thuật toán Machine Learning (như k-NN, DTW hay K-Means) rất nhạy cảm với độ lớn của con số. Cột GDP với đơn vị hàng chục nghìn sẽ hoàn toàn lấn át và làm lu mờ tác động của cột Điện hay Internet.
+
+PHẦN 2: THỨ TỰ ƯU TIÊN VÀ KỊCH BẢN CẢI THIỆN CHI TIẾT
+Để đồ án này không bị "gãy", bạn phải thực hiện Data Preprocessing theo đúng thứ tự (Pipeline) sau đây:
+
+ƯU TIÊN SỐ 1: Bổ sung "Linh hồn" của bộ dữ liệu (Khắc phục Tính Đa dạng)
+Bạn phải tạm dừng việc xử lý code và lên trang World Bank Open Data tải ngay 2 file sau (format giống hệt 6 file bạn đang có):
+
+Employment in services (% of total employment) - Giải quyết yêu cầu "phân bổ nhân lực".
+
+Services, value added (% of GDP) - Giải quyết yêu cầu "tỷ trọng dịch vụ".
+
+Hành động: Ghép (Merge) 2 file này vào tập dữ liệu cũ dựa trên khóa economy để có tổng cộng 8 chiều đặc trưng (8 features).
+
+ƯU TIÊN SỐ 2: Cắt tỉa không gian thời gian và không gian mẫu (Khắc phục Tính Đầy đủ)
+Đừng cố gắng cứu những dữ liệu rỗng. Hãy chủ động cắt bỏ để tập trung vào phần lõi chất lượng.
+
+Bước 1 (Xóa Cột): Xóa ngay lập tức toàn bộ cột YR2024 vì dữ liệu trống quá nhiều. Giới hạn khung thời gian phân tích từ 2004 đến 2023.
+
+Bước 2 (Lọc Dòng): Tính tỷ lệ phần trăm thiếu dữ liệu của từng quốc gia (từ 2004-2023). Đặt ngưỡng (Threshold): Những quốc gia nào bị thiếu quá 30% dữ liệu ở bất kỳ tiêu chí nào -> Xóa hẳn quốc gia đó khỏi bảng. Điều này sẽ giúp bạn loại bỏ các quốc gia quá nghèo hoặc có hệ thống thống kê yếu kém, giữ lại những nền kinh tế có số liệu minh bạch để tham chiếu cho Việt Nam.
+
+Bước 3 (Điền khuyết - Imputation): Với những lỗ hổng nhỏ (vài năm trống rải rác ở các quốc gia giữ lại), hãy dùng thuật toán Linear Interpolation (Nội suy tuyến tính) hoặc K-Nearest Neighbors Imputer (KNN Imputer) để lấp đầy số liệu một cách mượt mà nhất.
+
+ƯU TIÊN SỐ 3: Bóp nắn dữ liệu (Khắc phục Tính Chính xác & Nhất quán)
+Trước khi chạy mô hình so sánh Việt Nam và Hàn Quốc, hãy đưa dữ liệu qua "máy ép":
+
+Bước 1 (Xử lý Outliers cho FDI & Tín dụng): Dùng kỹ thuật Capping / Winsorization. Ví dụ: Ép tất cả các giá trị FDI nằm dưới mức -50% về thành -50%, và các giá trị trên 500% về thành 500%. Việc này giúp đường xu hướng kinh tế không bị giật cục.
+
+Bước 2 (Đồng bộ Thang đo): Chạy toàn bộ dữ liệu (trừ cột tên quốc gia và năm) qua hàm MinMaxScaler() của thư viện Scikit-Learn. Việc này sẽ ép mọi chỉ số từ GDP (hàng nghìn) hay Internet (phần trăm) về chung một hệ quy chiếu là từ 0 đến 1. Nhờ vậy, máy tính sẽ đánh giá mức độ quan trọng của các yếu tố (Hạ tầng, Tín dụng, GDP, Nhân lực) là ngang nhau.
