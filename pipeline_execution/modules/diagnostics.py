@@ -175,43 +175,49 @@ class DataDiagnostics:
         return self.diagnostic_report
     
     def save_report_csv(self, output_path: str):
-        """Lưu báo cáo dưới dạng CSV"""
+        """Lưu báo cáo tổng hợp (Phân phối, Missing, Outliers) dưới dạng CSV"""
         report_data = []
         
+        # Lấy dữ liệu từ các phần của diagnostic_report
         dist_report = self.diagnostic_report.get('distribution_analysis', {})
-        
-        for col, stats in dist_report.items():
-            row = {'Indicator': col}
-            row.update(stats)
+        missing_report = self.diagnostic_report.get('missing_analysis', {}).get('columns_missing', {})
+        outlier_report = self.diagnostic_report.get('outlier_detection', {}).get('outliers', {})
+
+        # Duyệt qua các cột numeric để gộp dữ liệu
+        for col in self.numeric_cols:
+            # 1. Thông tin phân phối
+            stats = dist_report.get(col, {})
+            
+            row = {
+                'Indicator': col,
+                **stats,  # mean, median, std, skewness, kurtosis...
+            }
+            
+            # 2. Thông tin Missing Values
+            col_missing = missing_report.get(col, {'count': 0, 'percentage': 0.0})
+            row['missing_count'] = col_missing['count']
+            row['missing_percentage'] = col_missing['percentage']
+            
+            # 3. Thông tin Outliers
+            col_outlier = outlier_report.get(col, {'count': 0, 'bounds': {'lower': None, 'upper': None}})
+            row['outlier_count'] = col_outlier['count']
+            row['outlier_lower_bound'] = col_outlier['bounds']['lower']
+            row['outlier_upper_bound'] = col_outlier['bounds']['upper']
+            
             report_data.append(row)
         
         if report_data:
             df_report = pd.DataFrame(report_data)
-            df_report.to_csv(output_path, index=False, encoding='utf-8')
-            self.logger.info(f"Report saved to {output_path}")
-    
-    def save_report_json(self, output_path: str):
-        """Lưu báo cáo dưới dạng JSON"""
-        # Convert numpy types to Python native types
-        import numpy as np
-        
-        def convert_types(obj):
-            if isinstance(obj, dict):
-                return {key: convert_types(val) for key, val in obj.items()}
-            elif isinstance(obj, (list, tuple)):
-                return [convert_types(item) for item in obj]
-            elif isinstance(obj, (np.integer, np.floating)):
-                return float(obj) if isinstance(obj, np.floating) else int(obj)
-            elif isinstance(obj, np.ndarray):
-                return obj.tolist()
-            else:
-                return obj
-        
-        converted_report = convert_types(self.diagnostic_report)
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(converted_report, f, indent=2, ensure_ascii=False)
-        self.logger.info(f"Report saved to {output_path}")
+            # Sắp xếp lại thứ tự cột cho dễ nhìn
+            cols_order = ['Indicator', 'count', 'missing_count', 'missing_percentage', 
+                          'outlier_count', 'mean', 'median', 'std', 'skewness', 'kurtosis']
+            # Giữ lại các cột khác (min, max, q25, q75...) ở phía sau
+            remaining_cols = [c for c in df_report.columns if c not in cols_order]
+            df_report = df_report[cols_order + remaining_cols]
+            
+            df_report.to_csv(output_path, index=False, encoding='utf-8-sig') # Thêm utf-8-sig để mở Excel không lỗi font
+            self.logger.info(f"Full diagnostic report saved to {output_path}")
+
     
     def create_visualizations(self, output_folder: str, figsize: Tuple[int, int] = (15, 10)):
         """Tạo visualizations: boxplots, histograms"""
