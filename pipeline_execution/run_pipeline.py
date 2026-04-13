@@ -210,10 +210,11 @@ def main(scenario_name: str = 'default'):
     try:
         # Initialize RunManager
         run_manager = RunManager('./outputs')
-        
+        # Tạo định danh: Sử dụng RunManager để tạo một thư mục riêng biệt trong outputs/runs/ dựa trên thời gian thực (ví dụ: run_20260411_...). Điều này giúp bạn không bao giờ bị ghi đè kết quả cũ.
         # Create run directory
         run_dir = run_manager.create_run_directory(scenario_name=scenario_name)
         
+        # Thiết lập nhật ký (Logging): Tạo các file log riêng cho từng công đoạn (data_integration.log, diagnostics.log,...) để dễ dàng kiểm tra lỗi sau này.
         # Setup logging for this run
         logger_setup = LoggerSetup(run_dir)
         logger = logger_setup.configure_root_logger(level=logging.INFO)

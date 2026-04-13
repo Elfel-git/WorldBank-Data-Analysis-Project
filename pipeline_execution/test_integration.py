@@ -1,5 +1,5 @@
 """
-Test full data_integration flow
+Thay vì chạy cả project lớn thì chỉ chạy đúng 1 file này và kiểm tra có lỗi hay không
 """
 import sys
 from pathlib import Path
