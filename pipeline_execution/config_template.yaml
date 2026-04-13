@@ -1,0 +1,120 @@
+# World Bank Data Pipeline - Configuration Template
+# ===================================================
+#
+# This file defines the configuration for the data processing pipeline.
+# Make a copy as final_config.yaml and edit according to your needs.
+#
+# Structure:
+# - phase1: Diagnostics settings (auto-generated)
+# - phase2: Execution pipeline settings
+#
+
+pipeline:
+  name: 'WorldBank Data Processing Pipeline'
+  version: '1.0'
+  description: 'Multi-phase data integration and processing'
+  input_folder: '../nam'
+  output_folder: './outputs'
+
+# ===================================================
+# PHASE 1: DIAGNOSTICS CONFIGURATION
+# ===================================================
+phase1:
+  
+  # Log Transform Configuration
+  # Enable log transformation for skewed distributions
+  log_transform:
+    enabled: false  # Set to true if data is highly skewed
+    features: null  # null = auto-detect positive columns
+    base: 10        # Log base (10 or e)
+    add_constant: 1.0  # Add before log to avoid log(0)
+  
+  # Outlier Detection Configuration
+  # Method: 'iqr' (recommended), 'zscore', 'isolation_forest'
+  outlier_detection:
+    method: 'iqr'  # IQR is robust and interpretable
+    
+    # IQR Parameters
+    iqr_multiplier: 1.5  # Increase (1.8, 2.0) for fewer outliers
+    
+    # Z-Score Parameters
+    zscore_threshold: 3.0
+    
+    # Isolation Forest Parameters
+    isolation_forest_contamination: 0.05
+    
+    # Action: 'clip' (keep bounds), 'remove' (delete rows), 'impute' (replace with NaN)
+    action: 'clip'
+
+# ===================================================
+# PHASE 2: EXECUTION PIPELINE CONFIGURATION
+# ===================================================
+phase2:
+  
+  # Scaling & Normalization
+  # Methods: 'standard' (z-score), 'minmax', 'robust'
+  # - standard: μ=0, σ=1 (best for normal distributions)
+  # - minmax: [0, 1] range (best for known bounds)
+  # - robust: uses percentiles (best for heavy outliers)
+  scaling:
+    method: 'standard'
+    features: null  # null = scale all numeric columns
+
+  # KNN Imputation for Missing Values
+  imputation:
+    method: 'knn'  # knn, mean, forward_fill
+    n_neighbors: 5  # Number of neighbors (reduce to 3 for sparse data)
+    weight_type: 'distance'  # 'distance' or 'uniform'
+
+# ===================================================
+# DIAGNOSTICS & ANALYSIS CONFIGURATION
+# ===================================================
+diagnostics:
+  # Histogram bins for distribution visualization
+  distribution_bins: 30
+  
+  # Correlation threshold for multicollinearity warnings
+  correlation_threshold: 0.8
+  
+  # Missing values threshold for identifying problematic columns
+  missing_threshold: 0.5  # 50% or more missing = problematic
+
+# ===================================================
+# PREPROCESSING STRATEGIES
+# ===================================================
+# Choose preprocessing strategy based on your data characteristics
+
+# Strategy 1: Conservative (Few changes)
+# Use this when data quality is already good
+# strategy_conservative:
+#   log_transform: {enabled: false}
+#   outlier_detection: {method: iqr, iqr_multiplier: 2.0, action: clip}
+#   scaling: {method: standard}
+#   imputation: {n_neighbors: 5}
+
+# Strategy 2: Moderate (Balanced approach - RECOMMENDED)
+# Use this for typical machine learning workflows
+# strategy_moderate:
+#   log_transform: {enabled: true}
+#   outlier_detection: {method: iqr, iqr_multiplier: 1.5, action: clip}
+#   scaling: {method: standard}
+#   imputation: {n_neighbors: 5}
+
+# Strategy 3: Aggressive (Heavy transformations)
+# Use this when data has significant issues
+# strategy_aggressive:
+#   log_transform: {enabled: true}
+#   outlier_detection: {method: isolation_forest, action: impute}
+#   scaling: {method: robust}
+#   imputation: {n_neighbors: 3}
+
+# ===================================================
+# FEATURE-SPECIFIC CONFIGURATIONS (Optional)
+# ===================================================
+# Per-feature overrides (not yet implemented in pipeline)
+# feature_overrides:
+#   'GDP per capita':
+#     log_transform: true
+#     outlier_multiplier: 2.0
+#   'Foreign direct investment':
+#     scaling: 'minmax'

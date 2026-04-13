@@ -1,0 +1,44 @@
+# Ignore all outputs except scenarios/
+outputs/
+!outputs/scenarios/
+!outputs/.gitkeep
+
+# Keep .gitignore itself
+!outputs/.gitignore
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Ignore environment files
+.env
+.venv
+venv/
+
+# Ignore IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore OS
+.DS_Store
+Thumbs.db
+
+# Ignore Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Ignore notebooks outputs
+.jupyterlab-settings/
+.jupyter/
+
+# Ignore logs
+*.log

@@ -1,0 +1,64 @@
+{
+  "original_shape": [
+    5546,
+    11
+  ],
+  "transformations": [
+    {
+      "type": "log_transform",
+      "columns": [
+        "Access to electricity (% of population)",
+        "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "Domestic credit to private sector (% of GDP)",
+        "Employment in services (% of total employment) (modeled ILO estimate)",
+        "GDP per capita (constant 2015 US$)",
+        "Industry (including construction), value added (% of GDP)",
+        "Services, value added (% of GDP)"
+      ],
+      "add_constant": 1.0
+    },
+    {
+      "type": "outlier_handling_iqr",
+      "action": "clip",
+      "multiplier": 1.5,
+      "outliers_found": {
+        "Access to electricity (% of population)": 679,
+        "Domestic credit to private sector (% of GDP)": 39,
+        "Employment in services (% of total employment) (modeled ILO estimate)": 50,
+        "Foreign direct investment, net inflows (% of GDP)": 560,
+        "Industry (including construction), value added (% of GDP)": 205,
+        "Services, value added (% of GDP)": 96
+      }
+    },
+    {
+      "type": "scaling",
+      "method": "standard",
+      "columns": [
+        "Access to electricity (% of population)",
+        "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "Domestic credit to private sector (% of GDP)",
+        "Employment in services (% of total employment) (modeled ILO estimate)",
+        "Foreign direct investment, net inflows (% of GDP)",
+        "GDP per capita (constant 2015 US$)",
+        "Individuals using the Internet (% of population)",
+        "Industry (including construction), value added (% of GDP)",
+        "Services, value added (% of GDP)"
+      ]
+    },
+    {
+      "type": "knn_imputation",
+      "n_neighbors": 5,
+      "columns": [
+        "Access to electricity (% of population)",
+        "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "Domestic credit to private sector (% of GDP)",
+        "Employment in services (% of total employment) (modeled ILO estimate)",
+        "Foreign direct investment, net inflows (% of GDP)",
+        "GDP per capita (constant 2015 US$)",
+        "Individuals using the Internet (% of population)",
+        "Industry (including construction), value added (% of GDP)",
+        "Services, value added (% of GDP)"
+      ]
+    }
+  ]
+}

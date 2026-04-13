@@ -1,0 +1,308 @@
+"""
+Master Pipeline Execution Script
+=================================
+Chạy tất cả phases của pipeline tự động
+
+Kiến trúc outputs/:
+├── scenarios/              # Lưu config cho các kịch bản khác nhau
+├── runs/                   # Lưu kết quả từng lần chạy
+│   ├── run_20260411_143000_baseline/
+│   ├── run_20260411_145200_conservative/
+│   └── ...
+└── latest/                 # Copy của run mới nhất
+
+Usage:
+    python run_pipeline.py                    # Chạy với scenario mặc định
+    python run_pipeline.py baseline           # Chạy scenario 'baseline'
+    python run_pipeline.py conservative      # Chạy scenario 'conservative'
+"""
+
+import sys
+import os
+from pathlib import Path
+import logging
+import json
+
+# Setup paths
+pipeline_dir = Path(__file__).parent
+sys.path.insert(0, str(pipeline_dir / 'modules'))
+os.chdir(pipeline_dir)
+
+# Import modules
+from data_integration import DataIntegration
+from diagnostics import DataDiagnostics
+from processing import DataProcessor
+from config_handler import ConfigHandler
+from run_manager import RunManager
+from logger_setup import LoggerSetup
+
+import pandas as pd
+import yaml
+import numpy as np
+
+
+def run_phase_0(run_dir: Path, logger: logging.Logger, logger_setup: LoggerSetup):
+    """PHASE 0: Data Integration"""
+    logger.info("\n" + "="*70)
+    logger.info("PHASE 0: DATA INTEGRATION")
+    logger.info("="*70)
+    
+    input_folder = '../nam'
+    
+    if not os.path.exists(input_folder):
+        raise FileNotFoundError(f"Input folder not found: {input_folder}")
+    
+    # Setup module logger for data_integration
+    module_logger = logger_setup.get_module_logger(
+        'data_integration',
+        log_file='data_integration.log'
+    )
+    
+    # Run integration
+    integration = DataIntegration(input_folder=input_folder, logger=module_logger)
+    merged_df = integration.run_integration()
+    
+    # Save to run directory
+    output_path = run_dir / 'dataset_merged.csv'
+    merged_df.to_csv(output_path, index=False, encoding='utf-8')
+    
+    logger.info(f"✓ PHASE 0 Complete: {output_path}")
+    logger.info(f"  Shape: {merged_df.shape}")
+    logger.info(f"  File size: {output_path.stat().st_size / (1024*1024):.2f} MB")
+    
+    return merged_df
+
+
+def run_phase_1(df: pd.DataFrame, run_dir: Path, logger: logging.Logger, logger_setup: LoggerSetup):
+    """PHASE 1: Auto Profiling & Diagnostics"""
+    logger.info("\n" + "="*70)
+    logger.info("PHASE 1: AUTO PROFILING & DIAGNOSTICS")
+    logger.info("="*70)
+    
+    # Setup module logger for diagnostics
+    module_logger = logger_setup.get_module_logger(
+        'diagnostics',
+        log_file='diagnostics.log'
+    )
+    
+    # Run diagnostics
+    diagnostics = DataDiagnostics(df, logger=module_logger)
+    diagnostic_report = diagnostics.run_diagnostics(
+        outlier_method='iqr',
+        iqr_multiplier=1.5
+    )
+    
+    # Save reports to run directory
+    diagnostics.save_report_csv(str(run_dir / 'diagnostic_report.csv'))
+    diagnostics.save_report_json(str(run_dir / 'diagnostic_report.json'))
+    
+    # Create visualizations
+    logger.info("Creating visualizations...")
+    diagnostics.create_visualizations(
+        output_folder=str(run_dir),
+        figsize=(15, 12)
+    )
+    
+    # Create draft config
+    logger.info("Creating draft configuration...")
+    config_handler = ConfigHandler()
+    draft_config = config_handler.create_default_config()
+    
+    # Update recommendations based on diagnostics
+    outlier_info = diagnostic_report.get('outlier_detection', {})
+    total_outliers = outlier_info.get('total_outlier_records', 0)
+    total_records = len(df)
+    outlier_percentage = (total_outliers / total_records * 100) if total_records > 0 else 0
+    
+    logger.info(f"  Outlier percentage: {outlier_percentage:.2f}%")
+    
+    if outlier_percentage > 5:
+        logger.info("  → Recommending higher IQR multiplier (1.8)")
+        draft_config['phase1']['outlier_detection']['iqr_multiplier'] = 1.8
+    
+    # Check for skewed distributions
+    dist_report = diagnostic_report.get('distribution_analysis', {})
+    skewed_cols = [col for col, stats in dist_report.items() if abs(stats['skewness']) > 2]
+    if skewed_cols:
+        logger.info(f"  → Found {len(skewed_cols)} highly skewed columns")
+        logger.info(f"  → Recommending LOG TRANSFORM")
+        draft_config['phase1']['log_transform']['enabled'] = True
+    
+    logger.info(f"✓ PHASE 1 Complete")
+    logger.info(f"  Reports: diagnostic_report.csv, diagnostic_report.json")
+    logger.info(f"  Visualizations: boxplots.png, histograms.png")
+    
+    return draft_config
+
+
+def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.Logger, logger_setup: LoggerSetup):
+    """PHASE 2: Execution Pipeline"""
+    logger.info("\n" + "="*70)
+    logger.info("PHASE 2: EXECUTION PIPELINE")
+    logger.info("="*70)
+    
+    # Setup module logger for processing
+    module_logger = logger_setup.get_module_logger(
+        'processing',
+        log_file='processing.log'
+    )
+    
+    # Create processor
+    processor = DataProcessor(df, logger=module_logger)
+    
+    # Build processing config
+    processing_config = {
+        'log_transform': config.get('phase1', {}).get('log_transform', {}),
+        'outlier_handling': config.get('phase1', {}).get('outlier_detection', {}),
+        'scaling': config.get('phase2', {}).get('scaling', {}),
+        'imputation': config.get('phase2', {}).get('imputation', {}),
+    }
+    
+    # Run pipeline
+    processed_df, scaler = processor.run_processing_pipeline(processing_config)
+    
+    # Save outputs to run directory
+    output_csv = run_dir / 'dataset_final.csv'
+    processed_df.to_csv(output_csv, index=False, encoding='utf-8')
+    logger.info(f"✓ Saved: {output_csv}")
+    logger.info(f"  Size: {output_csv.stat().st_size / (1024*1024):.2f} MB")
+    
+    # Save scaler
+    scaler_path = run_dir / 'scaler_model.pkl'
+    processor.save_scaler(str(scaler_path))
+    logger.info(f"✓ Saved: {scaler_path}")
+    
+    # Save metadata
+    metadata = processor.get_metadata()
+    metadata_path = run_dir / 'processing_metadata.json'
+    
+    # Helper to convert NumPy types to JSON-serializable types
+    def convert_types(obj):
+        if isinstance(obj, (np.integer, np.floating)):
+            return float(obj) if isinstance(obj, np.floating) else int(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: convert_types(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [convert_types(item) for item in obj]
+        return obj
+    
+    metadata = convert_types(metadata)
+    with open(metadata_path, 'w', encoding='utf-8') as f:
+        json.dump(metadata, f, indent=2, ensure_ascii=False)
+    logger.info(f"✓ Saved: {metadata_path}")
+    
+    logger.info(f"✓ PHASE 2 Complete")
+    logger.info(f"  Final shape: {processed_df.shape}")
+    logger.info(f"  Missing values: {processed_df.isna().sum().sum()}")
+    
+    return processed_df
+
+
+def main(scenario_name: str = 'default'):
+    """
+    Main execution - Chạy toàn bộ pipeline
+    
+    Args:
+        scenario_name: Tên kịch bản (được truyền từ command line)
+    """
+    try:
+        # Initialize RunManager
+        run_manager = RunManager('./outputs')
+        
+        # Create run directory
+        run_dir = run_manager.create_run_directory(scenario_name=scenario_name)
+        
+        # Setup logging for this run
+        logger_setup = LoggerSetup(run_dir)
+        logger = logger_setup.configure_root_logger(level=logging.INFO)
+        
+        logger.info(f"\n{'='*70}")
+        logger.info(f"WORLDBANK DATA PROCESSING PIPELINE")
+        logger.info(f"Scenario: {scenario_name}")
+        logger.info(f"{'='*70}\n")
+        
+        logger.info(f"📁 Run Directory: {run_dir}")
+        logger.info(f"📝 Logs Directory: {logger_setup.logs_dir}")
+        
+        # PHASE 0
+        merged_df = run_phase_0(run_dir, logger, logger_setup)
+        
+        # PHASE 1
+        draft_config = run_phase_1(merged_df, run_dir, logger, logger_setup)
+        
+        # Save config to run directory
+        run_manager.save_config_to_run(run_dir, draft_config, 'config.yaml')
+        
+        # PHASE 2
+        processed_df = run_phase_2(merged_df, draft_config, run_dir, logger, logger_setup)
+        
+        # Save run summary
+        summary = {
+            'scenario': scenario_name,
+            'merged_shape': list(merged_df.shape),
+            'final_shape': list(processed_df.shape),
+            'phases_completed': ['PHASE 0', 'PHASE 1', 'PHASE 2'],
+        }
+        run_manager.save_run_summary(run_dir, summary)
+        
+        # Update latest directory
+        run_manager.update_latest(run_dir)
+        
+        # Summary
+        logger.info("\n" + "="*70)
+        logger.info("🎉 PIPELINE EXECUTION COMPLETE")
+        logger.info("="*70)
+        logger.info(f"\n📂 Run Directory: {run_dir}")
+        logger.info(f"\n📋 Generated Files:")
+        
+        for file in sorted(run_dir.glob('*')):
+            if file.is_file():
+                size = file.stat().st_size
+                if size > 1024*1024:
+                    size_str = f"{size / (1024*1024):.2f} MB"
+                elif size > 1024:
+                    size_str = f"{size / 1024:.2f} KB"
+                else:
+                    size_str = f"{size} B"
+                logger.info(f"  ✓ {file.name:<35} {size_str:>12}")
+        
+        # Logs info
+        logger.info(f"\n📝 Logs Files:")
+        for log_file in sorted(logger_setup.logs_dir.glob('*.log')):
+            size = log_file.stat().st_size
+            if size > 1024:
+                size_str = f"{size / 1024:.2f} KB"
+            else:
+                size_str = f"{size} B"
+            logger.info(f"  ✓ {log_file.name:<35} {size_str:>12}")
+        
+        logger.info("\n" + "="*70)
+        logger.info(f"📁 Latest run: {run_manager.latest_dir}")
+        logger.info(f"📊 Use outputs/latest/dataset_final.csv for ML models!")
+        logger.info("="*70)
+        
+        # Print run list
+        logger.info("\n📚 ALL RUNS:\n")
+        runs = run_manager.get_run_list()
+        for i, (run_name, run_path) in enumerate(runs[:5], 1):  # Show top 5
+            info = run_manager.get_run_info(run_path)
+            logger.info(f"  {i}. {info['scenario'].upper():<20} | {info['timestamp']} | {info['total_size_mb']} MB")
+        
+        if len(runs) > 5:
+            logger.info(f"  ... and {len(runs)-5} more runs")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"\n❌ ERROR: {e}", exc_info=True)
+        return False
+
+
+if __name__ == '__main__':
+    # Parse scenario name from command line
+    scenario_name = sys.argv[1] if len(sys.argv) > 1 else 'default'
+    
+    success = main(scenario_name=scenario_name)
+    sys.exit(0 if success else 1)
