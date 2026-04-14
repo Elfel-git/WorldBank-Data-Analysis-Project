@@ -15,12 +15,15 @@ phase1:
     method: iqr
     zscore_threshold: 3.0
 phase2:
-
+  imputation:
+    method: knn
+    n_neighbors: 5
+    weight_type: distance
+  scaling:
+    features_to_scale: null
+    method: standard
 pipeline:
   input_folder: ../nam
   name: WorldBank Data Pipeline
   output_folder: ./outputs
   version: '1.0'
-
-
-

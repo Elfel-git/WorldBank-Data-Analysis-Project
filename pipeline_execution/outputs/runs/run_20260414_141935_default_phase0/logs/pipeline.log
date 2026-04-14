@@ -1,0 +1,64 @@
+2026-04-14 14:19:35,558 - root - INFO - 
+======================================================================
+2026-04-14 14:19:35,559 - root - INFO - PHASE 0 ONLY | Scenario: default
+2026-04-14 14:19:35,560 - root - INFO - ======================================================================
+
+2026-04-14 14:19:35,560 - root - INFO - 
+======================================================================
+2026-04-14 14:19:35,561 - root - INFO - PHASE 0: DATA INTEGRATION
+2026-04-14 14:19:35,562 - root - INFO - ======================================================================
+2026-04-14 14:19:35,564 - data_integration - INFO - ==================================================
+2026-04-14 14:19:35,565 - data_integration - INFO - PHASE 0: DATA INTEGRATION
+2026-04-14 14:19:35,566 - data_integration - INFO - ==================================================
+2026-04-14 14:19:35,566 - data_integration - INFO - Step 1: Loading CSV files...
+2026-04-14 14:19:35,587 - data_integration - INFO - Loaded: Access to electricity (% of population) - Shape: (266, 21)
+2026-04-14 14:19:35,591 - data_integration - INFO - Loaded: Agriculture, forestry, and fishing, value added (% of GDP) - Shape: (266, 21)
+2026-04-14 14:19:35,595 - data_integration - INFO - Loaded: Domestic credit to private sector (% of GDP) - Shape: (266, 21)
+2026-04-14 14:19:35,600 - data_integration - INFO - Loaded: Employment in services (% of total employment) (modeled ILO estimate) - Shape: (266, 21)
+2026-04-14 14:19:35,604 - data_integration - INFO - Loaded: Foreign direct investment, net inflows (% of GDP) - Shape: (266, 21)
+2026-04-14 14:19:35,609 - data_integration - INFO - Loaded: GDP per capita (constant 2015 US$) - Shape: (266, 21)
+2026-04-14 14:19:35,614 - data_integration - INFO - Loaded: Individuals using the Internet (% of population) - Shape: (266, 21)
+2026-04-14 14:19:35,617 - data_integration - INFO - Loaded: Industry (including construction), value added (% of GDP) - Shape: (266, 21)
+2026-04-14 14:19:35,622 - data_integration - INFO - Loaded: Services, value added (% of GDP) - Shape: (266, 21)
+2026-04-14 14:19:35,623 - data_integration - INFO - Loaded 9 indicators
+2026-04-14 14:19:35,623 - data_integration - INFO - Step 2: Standardizing structure...
+2026-04-14 14:19:35,645 - data_integration - INFO - Step 3: Merging datasets...
+2026-04-14 14:19:35,726 - data_integration - INFO - Merged dataset shape: (5546, 11)
+2026-04-14 14:19:35,727 - data_integration - INFO - Missing values ratio: 8.23%
+2026-04-14 14:19:35,728 - data_integration - INFO - Integration complete!
+2026-04-14 14:19:35,730 - data_integration - INFO - Data info: {'shape': (5546, 11), 'columns': ['Country', 'Year', 'Access to electricity (% of population)', 'Agriculture, forestry, and fishing, value added (% of GDP)', 'Domestic credit to private sector (% of GDP)', 'Employment in services (% of total employment) (modeled ILO estimate)', 'Foreign direct investment, net inflows (% of GDP)', 'GDP per capita (constant 2015 US$)', 'Individuals using the Internet (% of population)', 'Industry (including construction), value added (% of GDP)', 'Services, value added (% of GDP)'], 'years_range': (np.int64(2004), np.int64(2024)), 'countries_count': 265, 'records_count': 5546, 'missing_percentage': np.float64(8.231977182572207), 'numeric_columns': ['Year', 'Access to electricity (% of population)', 'Agriculture, forestry, and fishing, value added (% of GDP)', 'Domestic credit to private sector (% of GDP)', 'Employment in services (% of total employment) (modeled ILO estimate)', 'Foreign direct investment, net inflows (% of GDP)', 'GDP per capita (constant 2015 US$)', 'Individuals using the Internet (% of population)', 'Industry (including construction), value added (% of GDP)', 'Services, value added (% of GDP)']}
+2026-04-14 14:19:35,761 - root - INFO - ✓ PHASE 0 Complete: outputs\runs\run_20260414_141935_default_phase0\dataset_merged.csv
+2026-04-14 14:19:35,761 - root - INFO -   Shape: (5546, 11)
+2026-04-14 14:19:35,762 - root - INFO -   File size: 0.69 MB
+2026-04-14 14:19:35,762 - root - INFO - 
+======================================================================
+2026-04-14 14:19:35,762 - root - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-04-14 14:19:35,762 - root - INFO - ======================================================================
+2026-04-14 14:19:35,763 - diagnostics - INFO - ==================================================
+2026-04-14 14:19:35,763 - diagnostics - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-04-14 14:19:35,763 - diagnostics - INFO - ==================================================
+2026-04-14 14:19:35,764 - diagnostics - INFO - Step 1: Analyzing missing values...
+2026-04-14 14:19:35,765 - diagnostics - INFO - Step 2: Analyzing distributions...
+2026-04-14 14:19:35,776 - diagnostics - INFO - Step 3: Detecting outliers (iqr)...
+2026-04-14 14:19:35,785 - diagnostics - INFO - Diagnostics complete!
+2026-04-14 14:19:35,786 - diagnostics - INFO - Found 1538 outlier records
+2026-04-14 14:19:35,789 - diagnostics - INFO - Full diagnostic report saved to outputs\runs\run_20260414_141935_default_phase0\diagnostic_report.csv
+2026-04-14 14:19:35,789 - root - INFO - Creating visualizations...
+2026-04-14 14:19:36,507 - diagnostics - INFO - Saved: boxplots.png
+2026-04-14 14:19:37,267 - diagnostics - INFO - Saved: histograms.png
+2026-04-14 14:19:37,273 - root - INFO - Creating draft configuration...
+2026-04-14 14:19:37,273 - root - INFO -   Outlier percentage: 27.73%
+2026-04-14 14:19:37,274 - root - INFO -   → Recommending higher IQR multiplier (1.8)
+2026-04-14 14:19:37,274 - root - INFO -   → Found 2 highly skewed columns
+2026-04-14 14:19:37,274 - root - INFO -   → Recommending LOG TRANSFORM
+2026-04-14 14:19:37,274 - root - INFO - ✓ PHASE 1 Complete
+2026-04-14 14:19:37,275 - root - INFO -   Reports: diagnostic_report.csv (CSV only - optimized)
+2026-04-14 14:19:37,275 - root - INFO -   Visualizations: boxplots.png, histograms.png
+2026-04-14 14:19:37,277 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260414_141935_default_phase0\draft_config.yaml
+2026-04-14 14:19:37,278 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260414_141935_default_phase0\config.yaml
+2026-04-14 14:19:37,281 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260414_141935_default_phase0\run_summary.json
+2026-04-14 14:19:37,290 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-04-14 14:19:37,290 - root - INFO - 
+✓ Standalone phase0 completed successfully
+2026-04-14 14:19:37,290 - root - INFO -   Run directory: outputs\runs\run_20260414_141935_default_phase0
+2026-04-14 14:19:37,291 - root - INFO -   Generated YAML: draft_config.yaml (and config.yaml copy)

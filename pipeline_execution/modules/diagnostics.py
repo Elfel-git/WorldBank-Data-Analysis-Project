@@ -70,8 +70,12 @@ class DataDiagnostics:
                 'max': round(float(data.max()), 4),
                 'q25': round(float(data.quantile(0.25)), 4),
                 'q75': round(float(data.quantile(0.75)), 4),
-                'skewness': round(float(data.skew()), 4),
-                'kurtosis': round(float(data.kurtosis()), 4),
+                'skewness': round(float(data.skew()), 4), # Tính toán hệ số Fisher-Pearson 
+                # Skewness = 0 -> Phân phối đối xứng 
+                # Skewness > 0 
+                # Skewness < 0 
+                'kurtosis': round(float(data.kurtosis()), 4), # Tính toán Excess kurtosis
+                # k = 0 : Độ nhọn tương đương với phân phối chuẩn 
                 # Một đại lượng thống kê đo lường độ nhọn , độ dày của một phân phối xác suất 
                 # k > 0 đỉnh rất cao, đuôi nhọn còn, k < 0 thì đỉnh thấp bằng phẳng
             }
@@ -177,6 +181,7 @@ class DataDiagnostics:
     def save_report_csv(self, output_path: str):
         """Lưu báo cáo tổng hợp (Phân phối, Missing, Outliers) dưới dạng CSV"""
         report_data = []
+        total_rows = len(self.df)
         
         # Lấy dữ liệu từ các phần của diagnostic_report
         dist_report = self.diagnostic_report.get('distribution_analysis', {})
@@ -201,6 +206,7 @@ class DataDiagnostics:
             # 3. Thông tin Outliers
             col_outlier = outlier_report.get(col, {'count': 0, 'bounds': {'lower': None, 'upper': None}})
             row['outlier_count'] = col_outlier['count']
+            row['outlier_percentage'] = round((col_outlier['count'] / total_rows) * 100, 2) if total_rows > 0 else 0.0
             row['outlier_lower_bound'] = col_outlier['bounds']['lower']
             row['outlier_upper_bound'] = col_outlier['bounds']['upper']
             
@@ -210,7 +216,7 @@ class DataDiagnostics:
             df_report = pd.DataFrame(report_data)
             # Sắp xếp lại thứ tự cột cho dễ nhìn
             cols_order = ['Indicator', 'count', 'missing_count', 'missing_percentage', 
-                          'outlier_count', 'mean', 'median', 'std', 'skewness', 'kurtosis']
+                          'outlier_count', 'outlier_percentage', 'mean', 'median', 'std', 'skewness', 'kurtosis']
             # Giữ lại các cột khác (min, max, q25, q75...) ở phía sau
             remaining_cols = [c for c in df_report.columns if c not in cols_order]
             df_report = df_report[cols_order + remaining_cols]
@@ -223,6 +229,62 @@ class DataDiagnostics:
         """Tạo visualizations: boxplots, histograms"""
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
+
+        # Missing values theo thời gian (nếu có cột Year)
+        if 'Year' in self.df.columns:
+            indicator_cols = [col for col in self.df.columns if col not in ['Country', 'Year']]
+            if indicator_cols:
+                missing_by_year = (
+                    self.df.groupby('Year')[indicator_cols]
+                    .apply(lambda group: group.isna().mean().mean() * 100)
+                    .sort_index()
+                )
+
+                plt.figure(figsize=(12, 5))
+                plt.plot(missing_by_year.index, missing_by_year.values, marker='o', linewidth=2)
+                plt.title('Missing Values by Year (%)', fontsize=12)
+                plt.xlabel('Year')
+                plt.ylabel('Missing Percentage (%)')
+                plt.grid(True, alpha=0.3)
+                plt.tight_layout()
+                plt.savefig(output_folder / 'missing_values_by_year.png', dpi=120, bbox_inches='tight')
+                self.logger.info("Saved: missing_values_by_year.png")
+                plt.close()
+
+                # Missing values theo từng feature qua các năm (nhiều subplot)
+                missing_by_year_feature = (
+                    self.df.groupby('Year')[indicator_cols]
+                    .apply(lambda group: group.isna().mean() * 100)
+                    .sort_index()
+                )
+
+                n_features = len(indicator_cols)
+                ncols = 2
+                nrows = (n_features + ncols - 1) // ncols
+                fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 4 * nrows), squeeze=False)
+                axes = axes.flatten()
+
+                for idx, feature in enumerate(indicator_cols):
+                    ax = axes[idx]
+                    ax.plot(
+                        missing_by_year_feature.index,
+                        missing_by_year_feature[feature].values,
+                        marker='o',
+                        linewidth=1.8,
+                    )
+                    ax.set_title(feature, fontsize=10)
+                    ax.set_xlabel('Year')
+                    ax.set_ylabel('Missing %')
+                    ax.grid(True, alpha=0.3)
+
+                # Xóa subplot trống nếu số feature lẻ
+                for idx in range(n_features, len(axes)):
+                    fig.delaxes(axes[idx])
+
+                plt.tight_layout()
+                plt.savefig(output_folder / 'missing_values_by_feature_by_year.png', dpi=130, bbox_inches='tight')
+                self.logger.info("Saved: missing_values_by_feature_by_year.png")
+                plt.close()
         
         # Boxplots
         fig, axes = plt.subplots(nrows=(len(self.numeric_cols) + 1) // 2, ncols=2, figsize=figsize)

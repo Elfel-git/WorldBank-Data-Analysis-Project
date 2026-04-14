@@ -1,0 +1,13 @@
+2026-04-14 15:15:23,644 - diagnostics - INFO - ==================================================
+2026-04-14 15:15:23,644 - diagnostics - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-04-14 15:15:23,644 - diagnostics - INFO - ==================================================
+2026-04-14 15:15:23,645 - diagnostics - INFO - Step 1: Analyzing missing values...
+2026-04-14 15:15:23,647 - diagnostics - INFO - Step 2: Analyzing distributions...
+2026-04-14 15:15:23,660 - diagnostics - INFO - Step 3: Detecting outliers (iqr)...
+2026-04-14 15:15:23,669 - diagnostics - INFO - Diagnostics complete!
+2026-04-14 15:15:23,669 - diagnostics - INFO - Found 1538 outlier records
+2026-04-14 15:15:23,671 - diagnostics - INFO - Full diagnostic report saved to outputs\runs\run_20260414_151523_default_phase0\diagnostic_report.csv
+2026-04-14 15:15:24,477 - diagnostics - INFO - Saved: missing_values_by_year.png
+2026-04-14 15:15:30,334 - diagnostics - INFO - Saved: missing_values_by_feature_by_year.png
+2026-04-14 15:15:33,611 - diagnostics - INFO - Saved: boxplots.png
+2026-04-14 15:15:38,264 - diagnostics - INFO - Saved: histograms.png

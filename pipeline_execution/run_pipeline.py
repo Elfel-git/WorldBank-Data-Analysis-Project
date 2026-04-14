@@ -22,6 +22,8 @@ import os
 from pathlib import Path
 import logging
 import json
+import argparse
+from typing import Optional
 
 # Setup paths
 pipeline_dir = Path(__file__).parent
@@ -92,9 +94,8 @@ def run_phase_1(df: pd.DataFrame, run_dir: Path, logger: logging.Logger, logger_
         iqr_multiplier=1.5
     )
     
-    # Save reports to run directory
+    # Save reports to run directory (CSV only)
     diagnostics.save_report_csv(str(run_dir / 'diagnostic_report.csv'))
-    diagnostics.save_report_json(str(run_dir / 'diagnostic_report.json'))
     
     # Create visualizations
     logger.info("Creating visualizations...")
@@ -129,7 +130,7 @@ def run_phase_1(df: pd.DataFrame, run_dir: Path, logger: logging.Logger, logger_
         draft_config['phase1']['log_transform']['enabled'] = True
     
     logger.info(f"✓ PHASE 1 Complete")
-    logger.info(f"  Reports: diagnostic_report.csv, diagnostic_report.json")
+    logger.info(f"  Reports: diagnostic_report.csv (CSV only - optimized)")
     logger.info(f"  Visualizations: boxplots.png, histograms.png")
     
     return draft_config
@@ -301,9 +302,191 @@ def main(scenario_name: str = 'default'):
         return False
 
 
+def resolve_phase1_input_file(input_file: Optional[str]) -> Path:
+    """Resolve merged dataset path for standalone phase 1."""
+    if input_file:
+        input_path = Path(input_file)
+        if not input_path.exists():
+            raise FileNotFoundError(f"Input dataset not found: {input_path}")
+        return input_path
+
+    candidates = [
+        Path('./outputs/latest/dataset_merged.csv'),
+        Path('./outputs/dataset_merged.csv'),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    raise FileNotFoundError(
+        "Cannot find dataset_merged.csv. Run phase0 first or pass --input <path>."
+    )
+
+
+def resolve_phase1_config_file(config_file: Optional[str]) -> Path:
+    """Resolve YAML config path for standalone phase 1."""
+    if config_file:
+        config_path = Path(config_file)
+        if not config_path.exists():
+            raise FileNotFoundError(f"Config file not found: {config_path}")
+        return config_path
+
+    candidates = [
+        Path('./outputs/latest/final_config.yaml'),
+        Path('./outputs/latest/config.yaml'),
+        Path('./outputs/final_config.yaml'),
+        Path('./outputs/draft_config.yaml'),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    raise FileNotFoundError(
+        "Cannot find a config YAML file. Run phase0 first or pass --config <path>."
+    )
+
+
+def run_phase_0_standalone(scenario_name: str = 'default'):
+    """Run phase 0 only: data integration + diagnostics + draft YAML generation."""
+    try:
+        run_manager = RunManager('./outputs')
+        run_dir = run_manager.create_run_directory(scenario_name=f"{scenario_name}_phase0")
+
+        logger_setup = LoggerSetup(run_dir)
+        logger = logger_setup.configure_root_logger(level=logging.INFO)
+
+        logger.info(f"\n{'='*70}")
+        logger.info(f"PHASE 0 ONLY | Scenario: {scenario_name}")
+        logger.info(f"{'='*70}\n")
+
+        merged_df = run_phase_0(run_dir, logger, logger_setup)
+        draft_config = run_phase_1(merged_df, run_dir, logger, logger_setup)
+
+        run_manager.save_config_to_run(run_dir, draft_config, 'draft_config.yaml')
+        run_manager.save_config_to_run(run_dir, draft_config, 'config.yaml')
+
+        summary = {
+            'scenario': scenario_name,
+            'merged_shape': list(merged_df.shape),
+            'phases_completed': ['PHASE 0 - DIAGNOSTICS'],
+            'next_step': 'Run phase1 with a reviewed YAML config',
+        }
+        run_manager.save_run_summary(run_dir, summary)
+        run_manager.update_latest(run_dir)
+
+        logger.info("\n✓ Standalone phase0 completed successfully")
+        logger.info(f"  Run directory: {run_dir}")
+        logger.info("  Generated YAML: draft_config.yaml (and config.yaml copy)")
+
+        return True
+    except Exception as e:
+        logging.getLogger(__name__).error(f"\n❌ ERROR (phase0): {e}", exc_info=True)
+        return False
+
+
+def run_phase_1_standalone(
+    scenario_name: str = 'default',
+    config_file: Optional[str] = None,
+    input_file: Optional[str] = None,
+):
+    """Run phase 1 only: load YAML and execute preprocessing pipeline."""
+    try:
+        run_manager = RunManager('./outputs')
+        run_dir = run_manager.create_run_directory(scenario_name=f"{scenario_name}_phase1")
+
+        logger_setup = LoggerSetup(run_dir)
+        logger = logger_setup.configure_root_logger(level=logging.INFO)
+
+        logger.info(f"\n{'='*70}")
+        logger.info(f"PHASE 1 ONLY | Scenario: {scenario_name}")
+        logger.info(f"{'='*70}\n")
+
+        input_path = resolve_phase1_input_file(input_file)
+        config_path = resolve_phase1_config_file(config_file)
+
+        logger.info(f"Using merged dataset: {input_path}")
+        logger.info(f"Using config YAML: {config_path}")
+
+        merged_df = pd.read_csv(input_path)
+
+        config_handler = ConfigHandler()
+        loaded_config = config_handler.load_config(str(config_path))
+        is_valid, errors = config_handler.validate_config()
+        if not is_valid:
+            raise ValueError(f"Invalid config YAML: {'; '.join(errors)}")
+
+        run_manager.save_config_to_run(run_dir, loaded_config, 'config.yaml')
+
+        processed_df = run_phase_2(merged_df, loaded_config, run_dir, logger, logger_setup)
+
+        summary = {
+            'scenario': scenario_name,
+            'input_dataset': str(input_path),
+            'config_file': str(config_path),
+            'merged_shape': list(merged_df.shape),
+            'final_shape': list(processed_df.shape),
+            'phases_completed': ['PHASE 1 - YAML PREPROCESSING'],
+        }
+        run_manager.save_run_summary(run_dir, summary)
+        run_manager.update_latest(run_dir)
+
+        logger.info("\n✓ Standalone phase1 completed successfully")
+        logger.info(f"  Run directory: {run_dir}")
+
+        return True
+    except Exception as e:
+        logging.getLogger(__name__).error(f"\n❌ ERROR (phase1): {e}", exc_info=True)
+        return False
+
+
+def parse_cli_args() -> argparse.Namespace:
+    """Parse CLI args for separate phase execution."""
+    parser = argparse.ArgumentParser(
+        description='WorldBank pipeline runner with separate phase modes.'
+    )
+    parser.add_argument(
+        'mode',
+        nargs='?',
+        default='full',
+        choices=['full', 'phase0', 'phase1'],
+        help='Execution mode: full, phase0 (diagnostics), or phase1 (YAML preprocessing).',
+    )
+    parser.add_argument(
+        '--scenario',
+        default='default',
+        help='Scenario name used for run folder naming.',
+    )
+    parser.add_argument(
+        '--config',
+        default=None,
+        help='Path to YAML config for phase1. Optional in phase1 if default paths exist.',
+    )
+    parser.add_argument(
+        '--input',
+        default=None,
+        help='Path to dataset_merged.csv for phase1. Optional if default paths exist.',
+    )
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    # Parse scenario name from command line
-    scenario_name = sys.argv[1] if len(sys.argv) > 1 else 'default'
-    
-    success = main(scenario_name=scenario_name)
+    # Backward-compatible mode: python run_pipeline.py <scenario_name>
+    # when <scenario_name> is not one of supported mode names.
+    if len(sys.argv) == 2 and sys.argv[1] not in {'full', 'phase0', 'phase1', '-h', '--help'}:
+        success = main(scenario_name=sys.argv[1])
+        sys.exit(0 if success else 1)
+
+    args = parse_cli_args()
+
+    if args.mode == 'full':
+        success = main(scenario_name=args.scenario)
+    elif args.mode == 'phase0':
+        success = run_phase_0_standalone(scenario_name=args.scenario)
+    else:
+        success = run_phase_1_standalone(
+            scenario_name=args.scenario,
+            config_file=args.config,
+            input_file=args.input,
+        )
+
     sys.exit(0 if success else 1)

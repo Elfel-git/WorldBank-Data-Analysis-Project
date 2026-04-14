@@ -1,0 +1,24 @@
+# WorldBank Data Analysis Pipeline
+# Python 3.9+
+
+# Data Processing & Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Machine Learning & Preprocessing
+scikit-learn>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Configuration & Serialization
+pyyaml>=6.0
+
+# Utilities
+python-dotenv>=1.0.0
+
+# Jupyter (for notebooks)
+jupyter>=1.0.0
+ipython>=8.0.0
+ipykernel>=6.20.0
