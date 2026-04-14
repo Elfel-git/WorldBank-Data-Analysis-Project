@@ -60,3 +60,8 @@
 2026-04-14 20:45:16,686 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260414_204510_default_phase0\draft_config.yaml
 2026-04-14 20:45:16,689 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260414_204510_default_phase0\config.yaml
 2026-04-14 20:45:16,694 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260414_204510_default_phase0\run_summary.json
+2026-04-14 20:45:17,071 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-04-14 20:45:17,071 - root - INFO - 
+✓ Standalone phase0 completed successfully
+2026-04-14 20:45:17,072 - root - INFO -   Run directory: outputs\runs\run_20260414_204510_default_phase0
+2026-04-14 20:45:17,072 - root - INFO -   Generated YAML: draft_config.yaml (and config.yaml copy)

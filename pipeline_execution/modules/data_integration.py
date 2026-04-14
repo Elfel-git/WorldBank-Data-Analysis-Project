@@ -7,6 +7,7 @@ import numpy as np
 from pathlib import Path
 from typing import List, Tuple, Dict
 import logging
+import json
 # Lưu vết file để kiểm tra sau khi chương trình kết thúc
 # Cho phép bật tắt các module khác nhau mà không cần mã nguồn
 
@@ -17,16 +18,53 @@ logger = logging.getLogger(__name__)
 class DataIntegration:
     """Tích hợp dữ liệu từ các indicator khác nhau"""
     
-    def __init__(self, input_folder: str, logger: logging.Logger = None):
+    def __init__(self, input_folder: str, logger: logging.Logger = None, feature_mapping_path: str = None):
         self.input_folder = Path(input_folder)
         self.dataframes: Dict[str, pd.DataFrame] = {}
         self.merged_data = None
+        default_mapping_path = Path(__file__).resolve().parent.parent / 'feature_encoding_rules.json'
+        self.feature_mapping_path = Path(feature_mapping_path) if feature_mapping_path else default_mapping_path
+        self.feature_name_mapping: Dict[str, str] = {}
         
         # Use provided logger or get module logger
         if logger is None:
             self.logger = logging.getLogger(__name__)
         else:
             self.logger = logger
+
+    def load_feature_mapping(self) -> Dict[str, str]:
+        """Load bảng quy tắc mã hóa tên indicator từ file JSON."""
+        if not self.feature_mapping_path.exists():
+            self.logger.warning(
+                f"Feature mapping file not found: {self.feature_mapping_path}. Using original indicator names."
+            )
+            self.feature_name_mapping = {}
+            return self.feature_name_mapping
+
+        try:
+            with open(self.feature_mapping_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            mapping = data.get('indicator_mappings', {})
+            if not isinstance(mapping, dict):
+                raise ValueError("'indicator_mappings' must be a dictionary")
+
+            self.feature_name_mapping = mapping
+            self.logger.info(
+                f"Loaded {len(self.feature_name_mapping)} feature mappings from {self.feature_mapping_path}"
+            )
+        except Exception as e:
+            self.logger.error(f"Error loading feature mapping file: {e}")
+            self.feature_name_mapping = {}
+
+        return self.feature_name_mapping
+
+    def _encode_indicator_name(self, indicator_name: str) -> str:
+        """Mã hóa tên indicator theo mapping; nếu không có mapping thì giữ nguyên."""
+        encoded_name = self.feature_name_mapping.get(indicator_name, indicator_name)
+        if encoded_name == indicator_name and self.feature_name_mapping:
+            self.logger.warning(f"No mapping found for indicator: {indicator_name}. Using original name.")
+        return encoded_name
     
     def load_csv_files(self) -> Dict[str, pd.DataFrame]:
         """
@@ -39,12 +77,26 @@ class DataIntegration:
         if not csv_files:
             raise FileNotFoundError(f"Không tìm thấy CSV files ở {self.input_folder}")
             # Lỗi này sẽ được ghi trực tiếp ra màn hình chứ không phải 
+
+        # Load mapping trước để mã hóa tên indicator nhất quán trong toàn bộ pipeline
+        self.load_feature_mapping()
+
         for csv_file in csv_files:
             try:
                 df = pd.read_csv(csv_file, index_col=0)
-                indicator_name = csv_file.stem
+                raw_indicator_name = csv_file.stem
+                indicator_name = self._encode_indicator_name(raw_indicator_name)
+
+                if indicator_name in self.dataframes:
+                    raise ValueError(
+                        f"Duplicate encoded indicator name detected: {indicator_name}. "
+                        f"Check mapping for collisions."
+                    )
+
                 self.dataframes[indicator_name] = df
-                self.logger.info(f"Loaded: {indicator_name} - Shape: {df.shape}")
+                self.logger.info(
+                    f"Loaded: {raw_indicator_name} -> {indicator_name} - Shape: {df.shape}"
+                )
             except Exception as e:
                 self.logger.error(f"Error loading {csv_file}: {e}")
         
@@ -151,7 +203,7 @@ class DataIntegration:
         self.logger.info("=" * 50)
         
         # Step 1: Load
-        self.logger.info("Step 1: Loading CSV files...")
+        self.logger.info(f"Step 1: Loading CSV files from {self.input_folder}...")
         self.load_csv_files()
         self.logger.info(f"Loaded {len(self.dataframes)} indicators")
         
