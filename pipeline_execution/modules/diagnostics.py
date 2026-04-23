@@ -226,7 +226,7 @@ class DataDiagnostics:
 
     
     def create_visualizations(self, output_folder: str, figsize: Tuple[int, int] = (15, 10)):
-        """Tạo visualizations: boxplots, histograms"""
+        """Tạo visualizations: boxplots, histograms, heatmap, scatter plots"""
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
 
@@ -324,3 +324,9 @@ class DataDiagnostics:
         plt.savefig(output_folder / 'histograms.png', dpi=100, bbox_inches='tight')
         self.logger.info("Saved: histograms.png")
         plt.close()
+
+        #Correlation heatmap
+        self.plot_correlation_heatmap(output_folder)
+
+        #Pairwise scatter plots
+        self.plot_pairwise_scatter(output_folder) 
