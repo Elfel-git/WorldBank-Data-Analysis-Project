@@ -29,7 +29,7 @@ class OutlierConfig:
 @dataclass
 class ScalingConfig:
     """Cấu hình Scaling & Normalization"""
-    method: str = "standard"  # standard, minmax, robust
+    method: str = "minmax"  # standard, minmax, robust
     features_to_scale: List[str] = None  # None = tất cả numeric
 
 
@@ -49,6 +49,10 @@ class TransformConfig:
     base: float = 10
     add_constant: float = 1.0  # Để tránh log(0)
 
+class L1NormalizationConfig:
+    """Cấu hình L1 Normalization"""
+    enabled: bool = False
+    features: List[str] = None  # None = tất cả numeric
 
 class ConfigHandler:
     """Quản lý cấu hình pipeline"""

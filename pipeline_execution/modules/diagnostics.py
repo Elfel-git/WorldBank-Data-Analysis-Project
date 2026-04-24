@@ -224,6 +224,52 @@ class DataDiagnostics:
             df_report.to_csv(output_path, index=False, encoding='utf-8-sig') # Thêm utf-8-sig để mở Excel không lỗi font
             self.logger.info(f"Full diagnostic report saved to {output_path}")
 
+    def plot_correlation_heatmap(self, output_folder: Path, figsize: Tuple[int, int] = (12, 10)):
+        """Vẽ Heatmap tương quan giữa các biến"""
+        self.logger.info("Generating Heatmap...")
+        plt.figure(figsize=figsize)
+        corr_matrix = self.df[self.numeric_cols].corr()
+        
+        # Che nửa trên ma trận cho đỡ rối mắt
+        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+        
+        sns.heatmap(
+            corr_matrix, 
+            mask=mask, 
+            annot=True, 
+            fmt=".2f", 
+            cmap='coolwarm', 
+            vmin=-1, vmax=1, 
+            square=True, 
+            linewidths=.5,
+            cbar_kws={"shrink": .8}
+        )
+        
+        plt.title('Correlation Heatmap', fontsize=14, pad=20)
+        plt.tight_layout()
+        plt.savefig(Path(output_folder) / 'correlation_heatmap.png', dpi=120, bbox_inches='tight')
+        self.logger.info("Saved: correlation_heatmap.png")
+        plt.close()
+
+    def plot_pairwise_scatter(self, output_folder: Path):
+        """Vẽ Scatter Plot ma trận (Chọn top 5 biến để tránh quá tải RAM)"""
+        self.logger.info("Generating Pairwise Scatter Plot...")
+        
+        # Chọn tối đa 5 biến để vẽ cho nhanh và dễ nhìn
+        sample_cols = self.numeric_cols[:5] if len(self.numeric_cols) > 5 else self.numeric_cols
+        df_plot = self.df[sample_cols].dropna()
+        
+        pair_plot = sns.pairplot(
+            df_plot, 
+            kind='scatter', 
+            diag_kind='kde',
+            plot_kws={'alpha': 0.6, 's': 20, 'edgecolor': 'none'}
+        )
+        
+        pair_plot.fig.suptitle('Pairwise Scatter Plot (Top Features)', y=1.02, fontsize=16)
+        pair_plot.savefig(Path(output_folder) / 'pairwise_scatter.png', dpi=150, bbox_inches='tight')
+        self.logger.info("Saved: pairwise_scatter.png")
+        plt.close()
     
     def create_visualizations(self, output_folder: str, figsize: Tuple[int, int] = (15, 10)):
         """Tạo visualizations: boxplots, histograms, heatmap, scatter plots"""

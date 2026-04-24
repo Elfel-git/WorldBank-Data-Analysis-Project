@@ -38,6 +38,8 @@ from config_handler import ConfigHandler
 from run_manager import RunManager
 from logger_setup import LoggerSetup
 
+from transformation_viz import TransformationVisualizer
+
 import pandas as pd
 import yaml
 import numpy as np
@@ -194,6 +196,34 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
         json.dump(metadata, f, indent=2, ensure_ascii=False)
     logger.info(f"✓ Saved: {metadata_path}")
     
+    logger.info("\n" + "-"*50)
+    logger.info("Generating transformation visualizations...")
+    try:
+        # Lọc ra các cột numeric đại diện cho features (loại bỏ cột thời gian)
+        numeric_cols = processed_df.select_dtypes(include=[np.number]).columns.tolist()
+        for time_col in ['Year', 'year']:
+            if time_col in numeric_cols:
+                numeric_cols.remove(time_col)
+ 
+        _plot_kde_before_after(
+            df_raw=df,
+            df_transformed=processed_df,
+            numeric_cols=numeric_cols,
+            output_folder=run_dir,
+            logger=module_logger
+        )
+ 
+        _plot_stacked_bar_distributions(
+            df_transformed=processed_df,
+            numeric_cols=numeric_cols,
+            sample_countries=['VNM', 'THA', 'MYS', 'KOR', 'USA'],
+            output_folder=run_dir,
+            logger=module_logger
+        )
+    except Exception as e:
+        logger.error(f"❌ Failed to generate transformation visualizations: {e}", exc_info=True)
+    logger.info("-"*50)
+
     logger.info(f"✓ PHASE 2 Complete")
     logger.info(f"  Final shape: {processed_df.shape}")
     logger.info(f"  Missing values: {processed_df.isna().sum().sum()}")

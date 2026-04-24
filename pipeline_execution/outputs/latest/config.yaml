@@ -21,7 +21,9 @@ phase2:
     weight_type: distance
   scaling:
     features_to_scale: null
-    method: standard
+    method: minmax
+  l1_normalization:
+    enabled: true
 pipeline:
   input_folder: ../nam
   name: WorldBank Data Pipeline

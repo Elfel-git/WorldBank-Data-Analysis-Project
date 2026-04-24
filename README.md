@@ -121,39 +121,41 @@ Output: dataset_merged.csv (5546 rows × 11 columns)
 
 ---
 
-### PHASE 1: Auto Profiling & Diagnostics
-
-```
 Input: dataset_merged.csv
   ↓
 Analyze missing values
 Analyze distributions (mean, median, skewness, kurtosis)
-Detect outliers (IQR method)
-Create visualizations (boxplots, histograms)
+Detect outliers (IQR/Z-score method)
+Create univariate visualizations (boxplots, histograms)
+Create multivariate visualizations (correlation heatmap, pairwise scatter)
 Generate diagnostic report
   ↓
 Output:
   - diagnostic_report.csv (Statistical summary)
-  - boxplots.png (Distribution visualization)
+  - boxplots.png (Outlier visualization)
   - histograms.png (Frequency distribution)
-  - config.yaml (Recommended preprocessing)
-```
+  - correlation_heatmap.png (Multicollinearity check)
+  - pairwise_scatter.png (Non-linear relationship check)
+  - config.yaml (Recommended preprocessing parameters)
 
 ---
 
-### PHASE 2: Processing Pipeline
-
-```
 Input: dataset_merged.csv + config.yaml
   ↓
-1. Log Transform        (for skewed distributions)
-2. Outlier Handling     (clip method)
-3. Scaling              (StandardScaler)
+1. Log Transform        (For highly skewed distributions)
+2. Outlier Handling     (Clip method via IQR)
+3. Scaling              (MinMaxScaler - Strictly no negative values)
 4. Imputation           (KNN, k=5)
+5. L1-Normalization     (Convert features to probability distributions: sum = 1.0)
+6. Verify & Visualize   (KDE Before/After, 100% Stacked Bar)
   ↓
-Output: dataset_final.csv (Clean, normalized data ready for ML)
-```
-
+Output: 
+  - dataset_final.csv (Clean, probability-distributed data ready for KL Divergence)
+  - scaler_model.pkl (Saved scaling weights)
+  - processing_metadata.json (Transformation logs)
+  - kde_before_after_transform.png (Proof of normalization)
+  - probability_stacked_bars.png (Proof of economic structure representation)
+  
 ---
 
 ## 📊 Datasets

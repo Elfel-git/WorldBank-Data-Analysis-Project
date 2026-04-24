@@ -235,6 +235,37 @@ class DataProcessor:
         
         return self.df
     
+    def apply_l1_normalization(self, features: List[str] = None) -> pd.DataFrame:
+        """
+        L1 Normalization: Ép tổng các biến trên mỗi hàng bằng 1 (Probability Distribution).
+        Bước bắt buộc để sử dụng KL Divergence.
+        """
+        self.logger.info("Step 5: L1 Normalization (Probability Distribution)...")
+        
+        if features is None:
+            features = [col for col in self.numeric_cols if col in self.df.columns]
+            
+        # 1. Đảm bảo không có số âm (cắt về 0 nếu có)
+        self.df[features] = self.df[features].clip(lower=0)
+        
+        # 2. Tính tổng của các biến theo từng hàng
+        row_sums = self.df[features].sum(axis=1)
+        
+        # 3. Tránh lỗi chia cho 0 (gán các dòng tổng = 0 thành số cực nhỏ)
+        row_sums = row_sums.replace(0, 1e-9)
+        
+        # 4. Thực hiện phép chia (L1-Norm)
+        self.df[features] = self.df[features].div(row_sums, axis=0)
+        
+        self.metadata['transformations'].append({
+            'type': 'l1_normalization',
+            'columns': features
+        })
+        
+        self.logger.info(f"Successfully applied L1 Normalization to {len(features)} columns. Row sums are now 1.0.")
+        
+        return self.df
+
     def run_processing_pipeline(self, config: Dict[str, Any]) -> Tuple[pd.DataFrame, Any]:
         """
         Chạy toàn bộ processing pipeline theo config
@@ -283,6 +314,9 @@ class DataProcessor:
         self.knn_impute(
             n_neighbors=imputation_config.get('n_neighbors', 5)
         )
+
+        if config.get('l1_normalization', {}).get('enabled', False):
+            self.apply_l1_normalization()
         
         self.logger.info("Processing pipeline complete!")
         self.logger.info(f"Final shape: {self.df.shape}")
