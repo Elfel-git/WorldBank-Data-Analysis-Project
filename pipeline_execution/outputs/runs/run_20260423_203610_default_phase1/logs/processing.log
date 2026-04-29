@@ -1,0 +1,15 @@
+2026-04-23 20:36:10,668 - processing - INFO - ==================================================
+2026-04-23 20:36:10,669 - processing - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-23 20:36:10,669 - processing - INFO - ==================================================
+2026-04-23 20:36:10,670 - processing - INFO - Step 1: Log Transform (add_constant=1.0)...
+2026-04-23 20:36:10,674 - processing - INFO - Applied log transform to 7 columns
+2026-04-23 20:36:10,674 - processing - INFO - Step 2: Handle Outliers (IQR, action=clip)...
+2026-04-23 20:36:10,692 - processing - INFO - Found and clipd outliers in 6 columns
+2026-04-23 20:36:10,693 - processing - INFO - Step 3: Scaling & Normalization (standard)...
+2026-04-23 20:36:10,699 - processing - INFO - Scaled 9 columns with standard
+2026-04-23 20:36:10,699 - processing - INFO - Step 4: KNN Imputation (n_neighbors=5)...
+2026-04-23 20:36:11,958 - processing - INFO - Imputed missing values: 5022 -> 0
+2026-04-23 20:36:11,959 - processing - INFO - Processing pipeline complete!
+2026-04-23 20:36:11,961 - processing - INFO - Final shape: (5546, 11)
+2026-04-23 20:36:11,961 - processing - INFO - Missing values: 0
+2026-04-23 20:36:12,116 - processing - INFO - Scaler saved to outputs\runs\run_20260423_203610_default_phase1\scaler_model.pkl

@@ -149,7 +149,7 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
         'processing',
         log_file='processing.log'
     )
-    
+
     # Create processor
     processor = DataProcessor(df, logger=module_logger)
     
@@ -204,21 +204,35 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
         for time_col in ['Year', 'year']:
             if time_col in numeric_cols:
                 numeric_cols.remove(time_col)
- 
-        _plot_kde_before_after(
-            df_raw=df,
+
+
+        raw_csv_path = run_dir / 'dataset_merged.csv'
+        if not raw_csv_path.exists():
+            # Nếu trong run_dir không có, tìm ở thư mục latest
+            raw_csv_path = Path('./outputs/dataset_merged.csv')
+            
+        if raw_csv_path.exists():
+            df_absolutely_raw = pd.read_csv(raw_csv_path)
+            logger.info("Successfully reloaded absolute raw data from disk for visualization.")
+        else:
+            df_absolutely_raw = df.copy() # Phương án dự phòng
+            logger.warning("Could not find dataset_merged.csv on disk, using RAM copy.")
+
+
+        viz = TransformationVisualizer(
+            df_raw=df_absolutely_raw,
             df_transformed=processed_df,
             numeric_cols=numeric_cols,
-            output_folder=run_dir,
-            logger=module_logger
+            custom_logger=module_logger
+        )
+
+        viz.plot_kde_before_after(
+            output_folder=run_dir
         )
  
-        _plot_stacked_bar_distributions(
-            df_transformed=processed_df,
-            numeric_cols=numeric_cols,
+        viz.plot_stacked_bar_distributions(
             sample_countries=['VNM', 'THA', 'MYS', 'KOR', 'USA'],
-            output_folder=run_dir,
-            logger=module_logger
+            output_folder=run_dir
         )
     except Exception as e:
         logger.error(f"❌ Failed to generate transformation visualizations: {e}", exc_info=True)
@@ -341,15 +355,15 @@ def resolve_phase1_input_file(input_file: Optional[str]) -> Path:
         return input_path
 
     candidates = [
-        Path('./outputs/latest/dataset_merged.csv'),
-        Path('./outputs/dataset_merged.csv'),
+        Path('./outputs/latest/dataset_final.csv'),
+        Path('./outputs/dataset_final.csv'),
     ]
     for candidate in candidates:
         if candidate.exists():
             return candidate
 
     raise FileNotFoundError(
-        "Cannot find dataset_merged.csv. Run phase0 first or pass --input <path>."
+        "Cannot find dataset_final.csv. Run phase0 first or pass --input <path>."
     )
 
 

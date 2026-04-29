@@ -1,0 +1,47 @@
+2026-04-30 03:34:53,180 - root - INFO - 
+======================================================================
+2026-04-30 03:34:53,180 - root - INFO - PHASE 1 ONLY | Scenario: default
+2026-04-30 03:34:53,180 - root - INFO - ======================================================================
+
+2026-04-30 03:34:53,180 - root - INFO - Using merged dataset: outputs\latest\dataset_final.csv
+2026-04-30 03:34:53,180 - root - INFO - Using config YAML: outputs\latest\config.yaml
+2026-04-30 03:34:53,200 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260430_033453_default_phase1\config.yaml
+2026-04-30 03:34:53,200 - root - INFO - 
+======================================================================
+2026-04-30 03:34:53,204 - root - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-30 03:34:53,204 - root - INFO - ======================================================================
+2026-04-30 03:34:53,207 - processing - INFO - ==================================================
+2026-04-30 03:34:53,208 - processing - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-30 03:34:53,208 - processing - INFO - ==================================================
+2026-04-30 03:34:53,209 - processing - INFO - Step 1: Log Transform (add_constant=1.0)...
+2026-04-30 03:34:53,211 - processing - INFO - Applied log transform to 0 columns
+2026-04-30 03:34:53,214 - processing - INFO - Step 2: Handle Outliers (IQR, action=clip)...
+2026-04-30 03:34:53,228 - processing - INFO - Found and clipd outliers in 1 columns
+2026-04-30 03:34:53,229 - processing - INFO - Step 3: Scaling & Normalization (minmax)...
+2026-04-30 03:34:53,231 - processing - INFO - Scaled 9 columns with minmax
+2026-04-30 03:34:53,235 - processing - INFO - Step 4: KNN Imputation (n_neighbors=5)...
+2026-04-30 03:34:53,235 - processing - INFO - No missing values to impute
+2026-04-30 03:34:53,237 - processing - INFO - Processing pipeline complete!
+2026-04-30 03:34:53,238 - processing - INFO - Final shape: (5586, 11)
+2026-04-30 03:34:53,238 - processing - INFO - Missing values: 0
+2026-04-30 03:34:53,295 - root - INFO - ✓ Saved: outputs\runs\run_20260430_033453_default_phase1\dataset_final.csv
+2026-04-30 03:34:53,295 - root - INFO -   Size: 0.86 MB
+2026-04-30 03:34:53,295 - processing - INFO - Scaler saved to outputs\runs\run_20260430_033453_default_phase1\scaler_model.pkl
+2026-04-30 03:34:53,295 - root - INFO - ✓ Saved: outputs\runs\run_20260430_033453_default_phase1\scaler_model.pkl
+2026-04-30 03:34:53,299 - root - INFO - ✓ Saved: outputs\runs\run_20260430_033453_default_phase1\processing_metadata.json
+2026-04-30 03:34:53,299 - root - INFO - 
+--------------------------------------------------
+2026-04-30 03:34:53,300 - root - INFO - Generating transformation visualizations...
+2026-04-30 03:34:53,300 - processing - INFO - Generating KDE Before/After plots...
+2026-04-30 03:34:56,679 - processing - INFO - Saved: kde_before_after_transform.png
+2026-04-30 03:34:56,681 - processing - INFO - Generating 100% Stacked Bar Chart for year 2024...
+2026-04-30 03:34:57,051 - processing - INFO - Saved: probability_stacked_bars.png
+2026-04-30 03:34:57,051 - root - INFO - --------------------------------------------------
+2026-04-30 03:34:57,051 - root - INFO - ✓ PHASE 2 Complete
+2026-04-30 03:34:57,051 - root - INFO -   Final shape: (5586, 11)
+2026-04-30 03:34:57,051 - root - INFO -   Missing values: 0
+2026-04-30 03:34:57,057 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260430_033453_default_phase1\run_summary.json
+2026-04-30 03:34:57,080 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-04-30 03:34:57,080 - root - INFO - 
+✓ Standalone phase1 completed successfully
+2026-04-30 03:34:57,080 - root - INFO -   Run directory: outputs\runs\run_20260430_033453_default_phase1

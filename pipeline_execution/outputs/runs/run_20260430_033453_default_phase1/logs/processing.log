@@ -1,0 +1,19 @@
+2026-04-30 03:34:53,207 - processing - INFO - ==================================================
+2026-04-30 03:34:53,208 - processing - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-30 03:34:53,208 - processing - INFO - ==================================================
+2026-04-30 03:34:53,209 - processing - INFO - Step 1: Log Transform (add_constant=1.0)...
+2026-04-30 03:34:53,211 - processing - INFO - Applied log transform to 0 columns
+2026-04-30 03:34:53,214 - processing - INFO - Step 2: Handle Outliers (IQR, action=clip)...
+2026-04-30 03:34:53,228 - processing - INFO - Found and clipd outliers in 1 columns
+2026-04-30 03:34:53,229 - processing - INFO - Step 3: Scaling & Normalization (minmax)...
+2026-04-30 03:34:53,231 - processing - INFO - Scaled 9 columns with minmax
+2026-04-30 03:34:53,235 - processing - INFO - Step 4: KNN Imputation (n_neighbors=5)...
+2026-04-30 03:34:53,235 - processing - INFO - No missing values to impute
+2026-04-30 03:34:53,237 - processing - INFO - Processing pipeline complete!
+2026-04-30 03:34:53,238 - processing - INFO - Final shape: (5586, 11)
+2026-04-30 03:34:53,238 - processing - INFO - Missing values: 0
+2026-04-30 03:34:53,295 - processing - INFO - Scaler saved to outputs\runs\run_20260430_033453_default_phase1\scaler_model.pkl
+2026-04-30 03:34:53,300 - processing - INFO - Generating KDE Before/After plots...
+2026-04-30 03:34:56,679 - processing - INFO - Saved: kde_before_after_transform.png
+2026-04-30 03:34:56,681 - processing - INFO - Generating 100% Stacked Bar Chart for year 2024...
+2026-04-30 03:34:57,051 - processing - INFO - Saved: probability_stacked_bars.png

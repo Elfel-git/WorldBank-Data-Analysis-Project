@@ -1,0 +1,55 @@
+2026-04-30 03:20:44,420 - root - INFO - 
+======================================================================
+2026-04-30 03:20:44,420 - root - INFO - PHASE 1 ONLY | Scenario: default
+2026-04-30 03:20:44,420 - root - INFO - ======================================================================
+
+2026-04-30 03:20:44,427 - root - INFO - Using merged dataset: outputs\latest\dataset_final.csv
+2026-04-30 03:20:44,427 - root - INFO - Using config YAML: outputs\latest\config.yaml
+2026-04-30 03:20:44,439 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260430_032044_default_phase1\config.yaml
+2026-04-30 03:20:44,439 - root - INFO - 
+======================================================================
+2026-04-30 03:20:44,552 - root - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-30 03:20:44,552 - root - INFO - ======================================================================
+2026-04-30 03:20:44,560 - processing - INFO - ==================================================
+2026-04-30 03:20:44,560 - processing - INFO - PHASE 2: EXECUTION PIPELINE
+2026-04-30 03:20:44,560 - processing - INFO - ==================================================
+2026-04-30 03:20:44,563 - processing - INFO - Step 1: Log Transform (add_constant=1.0)...
+2026-04-30 03:20:44,567 - processing - INFO - Applied log transform to 0 columns
+2026-04-30 03:20:44,568 - processing - INFO - Step 2: Handle Outliers (IQR, action=clip)...
+2026-04-30 03:20:44,600 - processing - INFO - Found and clipd outliers in 5 columns
+2026-04-30 03:20:44,642 - processing - INFO - Step 3: Scaling & Normalization (minmax)...
+2026-04-30 03:20:44,651 - processing - INFO - Scaled 9 columns with minmax
+2026-04-30 03:20:44,651 - processing - INFO - Step 4: KNN Imputation (n_neighbors=5)...
+2026-04-30 03:20:44,653 - processing - INFO - No missing values to impute
+2026-04-30 03:20:44,654 - processing - INFO - Processing pipeline complete!
+2026-04-30 03:20:44,654 - processing - INFO - Final shape: (5586, 11)
+2026-04-30 03:20:44,656 - processing - INFO - Missing values: 0
+2026-04-30 03:20:44,719 - root - INFO - ✓ Saved: outputs\runs\run_20260430_032044_default_phase1\dataset_final.csv
+2026-04-30 03:20:44,719 - root - INFO -   Size: 0.86 MB
+2026-04-30 03:20:44,722 - processing - INFO - Scaler saved to outputs\runs\run_20260430_032044_default_phase1\scaler_model.pkl
+2026-04-30 03:20:44,722 - root - INFO - ✓ Saved: outputs\runs\run_20260430_032044_default_phase1\scaler_model.pkl
+2026-04-30 03:20:44,725 - root - INFO - ✓ Saved: outputs\runs\run_20260430_032044_default_phase1\processing_metadata.json
+2026-04-30 03:20:44,725 - root - INFO - 
+--------------------------------------------------
+2026-04-30 03:20:44,725 - root - INFO - Generating transformation visualizations...
+2026-04-30 03:20:44,728 - processing - INFO - Generating KDE Before/After plots...
+2026-04-30 03:20:48,142 - processing - INFO - Saved: kde_before_after_transform.png
+2026-04-30 03:20:48,143 - processing - INFO - Generating 100% Stacked Bar Chart for year 2024...
+2026-04-30 03:20:48,568 - processing - INFO - Saved: probability_stacked_bars.png
+2026-04-30 03:20:48,568 - root - ERROR - ❌ Failed to generate transformation visualizations: name 'df_clean' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Admin\Documents\GitHub\WorldBank-Data-Analysis-Project\pipeline_execution\run_pipeline.py", line 219, in run_phase_2
+    viz.plot_stacked_bar_distributions(
+  File "C:\Users\Admin\Documents\GitHub\WorldBank-Data-Analysis-Project\pipeline_execution\modules\transformation_viz.py", line 101, in plot_stacked_bar_distributions
+    if col in df_clean.columns:
+              ^^^^^^^^
+NameError: name 'df_clean' is not defined
+2026-04-30 03:20:48,575 - root - INFO - --------------------------------------------------
+2026-04-30 03:20:48,575 - root - INFO - ✓ PHASE 2 Complete
+2026-04-30 03:20:48,575 - root - INFO -   Final shape: (5586, 11)
+2026-04-30 03:20:48,577 - root - INFO -   Missing values: 0
+2026-04-30 03:20:48,579 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260430_032044_default_phase1\run_summary.json
+2026-04-30 03:20:48,588 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-04-30 03:20:48,588 - root - INFO - 
+✓ Standalone phase1 completed successfully
+2026-04-30 03:20:48,588 - root - INFO -   Run directory: outputs\runs\run_20260430_032044_default_phase1

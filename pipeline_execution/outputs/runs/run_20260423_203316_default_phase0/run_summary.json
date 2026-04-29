@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-04-23T20:33:24.828458",
+  "run_info": {
+    "run_name": "run_20260423_203316_default_phase0",
+    "timestamp": "20260423_203316",
+    "scenario": "default_phase0",
+    "files": {
+      "config": true,
+      "dataset_merged": true,
+      "dataset_final": false,
+      "diagnostic_report_csv": true,
+      "diagnostic_report_json": false,
+      "boxplots": true,
+      "histograms": true,
+      "scaler_model": false,
+      "processing_metadata": false,
+      "run_summary": false
+    },
+    "total_size_mb": 2.28,
+    "path": "outputs\\runs\\run_20260423_203316_default_phase0"
+  },
+  "summary": {
+    "scenario": "default",
+    "merged_shape": [
+      5546,
+      11
+    ],
+    "phases_completed": [
+      "PHASE 0 - DIAGNOSTICS"
+    ],
+    "next_step": "Run phase1 with a reviewed YAML config"
+  }
+}

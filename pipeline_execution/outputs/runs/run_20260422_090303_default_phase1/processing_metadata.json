@@ -1,0 +1,64 @@
+{
+  "original_shape": [
+    5546,
+    11
+  ],
+  "transformations": [
+    {
+      "type": "log_transform",
+      "columns": [
+        "Agri_GDP",
+        "Credit_Private",
+        "Elec_Access",
+        "Emp_Services",
+        "GDPC_2015",
+        "Indus_GDP",
+        "Serv_GDP"
+      ],
+      "add_constant": 1.0
+    },
+    {
+      "type": "outlier_handling_iqr",
+      "action": "clip",
+      "multiplier": 1.5,
+      "outliers_found": {
+        "Credit_Private": 39,
+        "Elec_Access": 679,
+        "Emp_Services": 50,
+        "FDI_GDP": 560,
+        "Indus_GDP": 205,
+        "Serv_GDP": 96
+      }
+    },
+    {
+      "type": "scaling",
+      "method": "standard",
+      "columns": [
+        "Agri_GDP",
+        "Credit_Private",
+        "Elec_Access",
+        "Emp_Services",
+        "FDI_GDP",
+        "GDPC_2015",
+        "Indus_GDP",
+        "Internet_Usage",
+        "Serv_GDP"
+      ]
+    },
+    {
+      "type": "knn_imputation",
+      "n_neighbors": 5,
+      "columns": [
+        "Agri_GDP",
+        "Credit_Private",
+        "Elec_Access",
+        "Emp_Services",
+        "FDI_GDP",
+        "GDPC_2015",
+        "Indus_GDP",
+        "Internet_Usage",
+        "Serv_GDP"
+      ]
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-30T03:55:53.372269",
+  "timestamp": "2026-04-30T03:05:34.519412",
   "run_info": {
-    "run_name": "run_20260430_035549_default_phase1",
-    "timestamp": "20260430_035549",
+    "run_name": "run_20260430_030533_default_phase1",
+    "timestamp": "20260430_030533",
     "scenario": "default_phase1",
     "files": {
       "config": true,
@@ -16,12 +16,12 @@
       "processing_metadata": true,
       "run_summary": false
     },
-    "total_size_mb": 1.41,
-    "path": "outputs\\runs\\run_20260430_035549_default_phase1"
+    "total_size_mb": 0.88,
+    "path": "outputs\\runs\\run_20260430_030533_default_phase1"
   },
   "summary": {
     "scenario": "default",
-    "input_dataset": "outputs\\latest\\dataset_final.csv",
+    "input_dataset": "outputs\\latest\\dataset_merged.csv",
     "config_file": "outputs\\latest\\config.yaml",
     "merged_shape": [
       5586,

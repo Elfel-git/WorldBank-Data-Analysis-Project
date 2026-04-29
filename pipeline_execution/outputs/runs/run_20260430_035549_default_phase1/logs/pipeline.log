@@ -42,3 +42,7 @@
 2026-04-30 03:55:53,372 - root - INFO -   Final shape: (5586, 11)
 2026-04-30 03:55:53,372 - root - INFO -   Missing values: 0
 2026-04-30 03:55:53,372 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260430_035549_default_phase1\run_summary.json
+2026-04-30 03:55:53,391 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-04-30 03:55:53,391 - root - INFO - 
+✓ Standalone phase1 completed successfully
+2026-04-30 03:55:53,391 - root - INFO -   Run directory: outputs\runs\run_20260430_035549_default_phase1
