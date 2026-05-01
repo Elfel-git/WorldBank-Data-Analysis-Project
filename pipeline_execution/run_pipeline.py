@@ -209,15 +209,22 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
         raw_csv_path = run_dir / 'dataset_merged.csv'
         if not raw_csv_path.exists():
             # Nếu trong run_dir không có, tìm ở thư mục latest
-            raw_csv_path = Path('./outputs/dataset_merged.csv')
+            raw_csv_path = Path('./outputs/latest/dataset_merged.csv')
             
         if raw_csv_path.exists():
             df_absolutely_raw = pd.read_csv(raw_csv_path)
             logger.info("Successfully reloaded absolute raw data from disk for visualization.")
         else:
-            df_absolutely_raw = df.copy() # Phương án dự phòng
-            logger.warning("Could not find dataset_merged.csv on disk, using RAM copy.")
+            raise FileNotFoundError("Cannot find dataset_merged.csv for visualization. Make sure it was saved in phase 0.")
+        
+        final_path = run_dir / 'dataset_final.csv'
+        if not final_path.exists():
+            final_path = Path('./outputs/latest/dataset_final.csv')
 
+        if final_path.exists():
+            df_transformed = pd.read_csv(final_path)
+            logger.info("Successfully reloaded transformed data from disk for visualization.")
+        else:            raise FileNotFoundError("Cannot find dataset_final.csv for visualization. Make sure it was saved in phase 2.")
 
         viz = TransformationVisualizer(
             df_raw=df_absolutely_raw,
