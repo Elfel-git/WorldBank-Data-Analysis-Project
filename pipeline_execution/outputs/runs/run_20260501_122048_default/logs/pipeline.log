@@ -102,3 +102,47 @@
 2026-05-01 12:21:01,002 - root - INFO -   Final shape: (5586, 11)
 2026-05-01 12:21:01,004 - root - INFO -   Missing values: 0
 2026-05-01 12:21:01,009 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260501_122048_default\run_summary.json
+2026-05-01 12:21:01,047 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-05-01 12:21:01,048 - root - INFO - 
+======================================================================
+2026-05-01 12:21:01,048 - root - INFO - 🎉 PIPELINE EXECUTION COMPLETE
+2026-05-01 12:21:01,048 - root - INFO - ======================================================================
+2026-05-01 12:21:01,048 - root - INFO - 
+📂 Run Directory: outputs\runs\run_20260501_122048_default
+2026-05-01 12:21:01,048 - root - INFO - 
+📋 Generated Files:
+2026-05-01 12:21:01,050 - root - INFO -   ✓ boxplots.png                            76.51 KB
+2026-05-01 12:21:01,050 - root - INFO -   ✓ config.yaml                                612 B
+2026-05-01 12:21:01,050 - root - INFO -   ✓ correlation_heatmap.png                 97.50 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ dataset_final.csv                      898.56 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ dataset_merged.csv                     705.33 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ diagnostic_report.csv                    1.29 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ histograms.png                          91.95 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ kde_before_after_transform.png         550.07 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ missing_values_by_feature_by_year.png    250.61 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ missing_values_by_year.png              37.53 KB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ pairwise_scatter.png                     1.03 MB
+2026-05-01 12:21:01,051 - root - INFO -   ✓ probability_stacked_bars.png            48.86 KB
+2026-05-01 12:21:01,053 - root - INFO -   ✓ processing_metadata.json                 1.24 KB
+2026-05-01 12:21:01,053 - root - INFO -   ✓ run_summary.json                           846 B
+2026-05-01 12:21:01,053 - root - INFO -   ✓ scaler_model.pkl                         1.02 KB
+2026-05-01 12:21:01,053 - root - INFO - 
+📝 Logs Files:
+2026-05-01 12:21:01,054 - root - INFO -   ✓ data_integration.log                     2.83 KB
+2026-05-01 12:21:01,054 - root - INFO -   ✓ diagnostics.log                          1.41 KB
+2026-05-01 12:21:01,054 - root - INFO -   ✓ pipeline.log                            11.70 KB
+2026-05-01 12:21:01,055 - root - INFO -   ✓ processing.log                           1.60 KB
+2026-05-01 12:21:01,055 - root - INFO - 
+======================================================================
+2026-05-01 12:21:01,055 - root - INFO - 📁 Latest run: outputs\latest
+2026-05-01 12:21:01,055 - root - INFO - 📊 Use outputs/latest/dataset_final.csv for ML models!
+2026-05-01 12:21:01,056 - root - INFO - ======================================================================
+2026-05-01 12:21:01,056 - root - INFO - 
+📚 ALL RUNS:
+
+2026-05-01 12:21:01,059 - root - INFO -   1. DEFAULT              | 20260501_122048 | 3.74 MB
+2026-05-01 12:21:01,062 - root - INFO -   2. DEFAULT_PHASE0       | 20260501_121959 | 2.27 MB
+2026-05-01 12:21:01,064 - root - INFO -   3. DEFAULT_PHASE1       | 20260501_121748 | 0.0 MB
+2026-05-01 12:21:01,065 - root - INFO -   4. DEFAULT_PHASE1       | 20260501_121736 | 0.0 MB
+2026-05-01 12:21:01,066 - root - INFO -   5. DEFAULT_PHASE1       | 20260501_121327 | 0.0 MB
+2026-05-01 12:21:01,066 - root - INFO -   ... and 5 more runs
