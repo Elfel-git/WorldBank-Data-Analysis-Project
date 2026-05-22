@@ -1,0 +1,19 @@
+2026-05-12 10:45:25,198 - diagnostics - INFO - ==================================================
+2026-05-12 10:45:25,198 - diagnostics - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-05-12 10:45:25,198 - diagnostics - INFO - ==================================================
+2026-05-12 10:45:25,198 - diagnostics - INFO - Step 1: Analyzing missing values...
+2026-05-12 10:45:25,214 - diagnostics - INFO - Step 2: Analyzing distributions...
+2026-05-12 10:45:25,232 - diagnostics - INFO - Step 3: Detecting outliers (iqr)...
+2026-05-12 10:45:25,253 - diagnostics - INFO - Diagnostics complete!
+2026-05-12 10:45:25,285 - diagnostics - INFO - Found 1538 outlier records
+2026-05-12 10:45:25,285 - diagnostics - INFO - Full diagnostic report saved to outputs\runs\run_20260512_104524_default\diagnostic_report.csv
+2026-05-12 10:45:25,797 - diagnostics - INFO - Saved: missing_values_by_year.png
+2026-05-12 10:45:27,463 - diagnostics - INFO - Saved: missing_values_by_feature_by_year.png
+2026-05-12 10:45:28,406 - diagnostics - INFO - Saved: boxplots.png
+2026-05-12 10:45:29,928 - diagnostics - INFO - Saved: histograms.png
+2026-05-12 10:45:29,963 - diagnostics - INFO - Generating Heatmap...
+2026-05-12 10:45:30,528 - diagnostics - INFO - Saved: correlation_heatmap.png
+2026-05-12 10:45:30,562 - diagnostics - INFO - Generating Pairwise Scatter Plot...
+2026-05-12 10:45:34,902 - diagnostics - INFO - Saved: pairwise_scatter.png
+2026-05-12 10:45:34,928 - diagnostics - INFO - Generating Overlaid KDE Histograms...
+2026-05-12 10:45:38,108 - diagnostics - INFO - Saved Overlaid KDE Histogram: histogram_with_kde.png

@@ -271,8 +271,67 @@ class DataDiagnostics:
         self.logger.info("Saved: pairwise_scatter.png")
         plt.close()
     
+    def plot_histogram_with_kde(self, output_folder, figsize=(16, 20)):
+        """Vẽ biểu đồ Histogram kết hợp đường cong KDE (Mật độ phân phối)"""
+        self.logger.info("Generating Overlaid KDE Histograms...")
+        
+        # Lọc bỏ cột năm (Year) vì biến thời gian không có ý nghĩa khi vẽ phân phối
+        plot_cols = [col for col in self.numeric_cols if col not in ['Year', 'year', 'Country Code', 'ID']]
+        
+        n_cols = len(plot_cols)
+        nrows = (n_cols + 1) // 2
+        
+        # Tự động điều chỉnh chiều cao khung hình dựa trên số lượng biến
+        fig, axes = plt.subplots(nrows=nrows, ncols=2, figsize=(15, 4 * nrows))
+        axes = axes.flatten()
+        
+        for idx, col in enumerate(plot_cols):
+            ax = axes[idx]
+            data = self.df[col].dropna() # Loại bỏ NaN để tránh lỗi
+            
+            # Hàm sns.histplot gánh toàn bộ logic lồng ghép
+            sns.histplot(
+                data=data,
+                kde=False,              # Bật đường cong KDE
+                stat="density",        # QUAN TRỌNG: Chuẩn hóa trục Y thành Mật độ xác suất
+                color='steelblue',     # Màu cột
+                alpha=0.5,             # Độ trong suốt của cột
+                edgecolor='white',     # Viền cột
+                ax=ax
+            )
+            
+            sns.kdeplot(
+                data=data,
+                color='red',
+                linewidth=2,
+                ax=ax
+            )
+
+            ax.set_title(f'Histogram & KDE: {col}', fontsize=12, fontweight='bold')
+            ax.set_xlabel('Value', fontsize=10)
+            ax.set_ylabel('Density', fontsize=10)
+            ax.grid(True, alpha=0.3, linestyle='--')
+            
+        # Dọn dẹp: Xóa các ô subplot trống nếu số lượng biến là số lẻ
+        for idx in range(n_cols, len(axes)):
+            fig.delaxes(axes[idx])
+            
+        plt.tight_layout()
+        
+        # Đảm bảo output_folder là Path object
+        from pathlib import Path
+        output_dir = Path(output_folder)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Lưu file
+        file_path = output_dir / 'histogram_with_kde.png'
+        plt.savefig(file_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        
+        self.logger.info(f"Saved Overlaid KDE Histogram: {file_path.name}")
+
     def create_visualizations(self, output_folder: str, figsize: Tuple[int, int] = (15, 10)):
-        """Tạo visualizations: boxplots, histograms, heatmap, scatter plots"""
+        """Tạo visualizations: boxplots, histograms, heatmap, scatter plots, histogram kết hợp KDE"""
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
 
@@ -376,3 +435,6 @@ class DataDiagnostics:
 
         #Pairwise scatter plots
         self.plot_pairwise_scatter(output_folder) 
+
+        #Histogram kết hợp KDE
+        self.plot_histogram_with_kde(output_folder)

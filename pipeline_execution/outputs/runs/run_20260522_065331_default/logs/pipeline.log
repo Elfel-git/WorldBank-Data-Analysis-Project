@@ -1,0 +1,183 @@
+2026-05-22 06:53:31,074 - root - INFO - 
+======================================================================
+2026-05-22 06:53:31,074 - root - INFO - WORLDBANK DATA PROCESSING PIPELINE
+2026-05-22 06:53:31,074 - root - INFO - Scenario: default
+2026-05-22 06:53:31,074 - root - INFO - ======================================================================
+
+2026-05-22 06:53:31,074 - root - INFO - 📁 Run Directory: outputs\runs\run_20260522_065331_default
+2026-05-22 06:53:31,074 - root - INFO - 📝 Logs Directory: outputs\runs\run_20260522_065331_default\logs
+2026-05-22 06:53:31,083 - root - INFO - 
+======================================================================
+2026-05-22 06:53:31,083 - root - INFO - PHASE 0: DATA INTEGRATION
+2026-05-22 06:53:31,084 - root - INFO - ======================================================================
+2026-05-22 06:53:31,084 - data_integration - INFO - ==================================================
+2026-05-22 06:53:31,084 - data_integration - INFO - PHASE 0: DATA INTEGRATION
+2026-05-22 06:53:31,084 - data_integration - INFO - ==================================================
+2026-05-22 06:53:31,084 - data_integration - INFO - Step 1: Loading CSV files from ..\nam...
+2026-05-22 06:53:31,109 - data_integration - INFO - Loaded 9 feature mappings from D:\GitHub\WorldBank-Data-Analysis-Project\pipeline_execution\feature_encoding_rules.json
+2026-05-22 06:53:31,138 - data_integration - INFO - Loaded: Access to electricity (% of population) -> Elec_Access - Shape: (266, 21)
+2026-05-22 06:53:31,154 - data_integration - INFO - Loaded: Agriculture, forestry, and fishing, value added (% of GDP) -> Agri_GDP - Shape: (266, 21)
+2026-05-22 06:53:31,170 - data_integration - INFO - Loaded: Domestic credit to private sector (% of GDP) -> Credit_Private - Shape: (266, 21)
+2026-05-22 06:53:31,178 - data_integration - INFO - Loaded: Employment in services (% of total employment) (modeled ILO estimate) -> Emp_Services - Shape: (266, 21)
+2026-05-22 06:53:31,194 - data_integration - INFO - Loaded: Foreign direct investment, net inflows (% of GDP) -> FDI_GDP - Shape: (266, 21)
+2026-05-22 06:53:31,206 - data_integration - INFO - Loaded: GDP per capita (constant 2015 US$) -> GDPC_2015 - Shape: (266, 21)
+2026-05-22 06:53:31,229 - data_integration - INFO - Loaded: Individuals using the Internet (% of population) -> Internet_Usage - Shape: (266, 21)
+2026-05-22 06:53:31,246 - data_integration - INFO - Loaded: Industry (including construction), value added (% of GDP) -> Indus_GDP - Shape: (266, 21)
+2026-05-22 06:53:31,254 - data_integration - INFO - Loaded: Services, value added (% of GDP) -> Serv_GDP - Shape: (266, 21)
+2026-05-22 06:53:31,254 - data_integration - INFO - Loaded 9 indicators
+2026-05-22 06:53:31,254 - data_integration - INFO - Step 2: Standardizing structure...
+2026-05-22 06:53:31,283 - data_integration - INFO - Step 3: Merging datasets...
+2026-05-22 06:53:31,405 - data_integration - INFO - Merged dataset shape: (5546, 11)
+2026-05-22 06:53:31,405 - data_integration - INFO - Missing values ratio: 8.23%
+2026-05-22 06:53:31,405 - data_integration - INFO - Integration complete!
+2026-05-22 06:53:31,405 - data_integration - INFO - Data info: {'shape': (5546, 11), 'columns': ['Country', 'Year', 'Agri_GDP', 'Credit_Private', 'Elec_Access', 'Emp_Services', 'FDI_GDP', 'GDPC_2015', 'Indus_GDP', 'Internet_Usage', 'Serv_GDP'], 'years_range': (np.int64(2004), np.int64(2024)), 'countries_count': 265, 'records_count': 5546, 'missing_percentage': np.float64(8.231977182572207), 'numeric_columns': ['Year', 'Agri_GDP', 'Credit_Private', 'Elec_Access', 'Emp_Services', 'FDI_GDP', 'GDPC_2015', 'Indus_GDP', 'Internet_Usage', 'Serv_GDP']}
+2026-05-22 06:53:31,483 - root - INFO - ✓ PHASE 0 Complete: outputs\runs\run_20260522_065331_default\dataset_merged.csv
+2026-05-22 06:53:31,484 - root - INFO -   Shape: (5546, 11)
+2026-05-22 06:53:31,484 - root - INFO -   File size: 0.69 MB
+2026-05-22 06:53:31,484 - root - INFO - 
+======================================================================
+2026-05-22 06:53:31,484 - root - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-05-22 06:53:31,484 - root - INFO - ======================================================================
+2026-05-22 06:53:31,484 - diagnostics - INFO - ==================================================
+2026-05-22 06:53:31,484 - diagnostics - INFO - PHASE 1: AUTO PROFILING & DIAGNOSTICS
+2026-05-22 06:53:31,484 - diagnostics - INFO - ==================================================
+2026-05-22 06:53:31,484 - diagnostics - INFO - Step 1: Analyzing missing values...
+2026-05-22 06:53:31,491 - diagnostics - INFO - Step 2: Analyzing distributions...
+2026-05-22 06:53:31,508 - diagnostics - INFO - Step 3: Detecting outliers (iqr)...
+2026-05-22 06:53:31,535 - diagnostics - INFO - Diagnostics complete!
+2026-05-22 06:53:31,535 - diagnostics - INFO - Found 1538 outlier records
+2026-05-22 06:53:31,575 - diagnostics - INFO - Full diagnostic report saved to outputs\runs\run_20260522_065331_default\diagnostic_report.csv
+2026-05-22 06:53:31,575 - root - INFO - Creating visualizations...
+2026-05-22 06:53:33,389 - diagnostics - INFO - Saved: missing_values_by_year.png
+2026-05-22 06:53:34,690 - diagnostics - INFO - Saved: missing_values_by_feature_by_year.png
+2026-05-22 06:53:35,533 - diagnostics - INFO - Saved: boxplots.png
+2026-05-22 06:53:36,853 - diagnostics - INFO - Saved: histograms.png
+2026-05-22 06:53:36,873 - diagnostics - INFO - Generating Heatmap...
+2026-05-22 06:53:37,392 - diagnostics - INFO - Saved: correlation_heatmap.png
+2026-05-22 06:53:37,403 - diagnostics - INFO - Generating Pairwise Scatter Plot...
+2026-05-22 06:53:40,926 - diagnostics - INFO - Saved: pairwise_scatter.png
+2026-05-22 06:53:40,934 - diagnostics - INFO - Generating Overlaid KDE Histograms...
+2026-05-22 06:53:43,457 - diagnostics - INFO - Saved Overlaid KDE Histogram: histogram_with_kde.png
+2026-05-22 06:53:43,458 - root - INFO - Creating draft configuration...
+2026-05-22 06:53:43,459 - root - INFO -   Outlier percentage: 27.73%
+2026-05-22 06:53:43,459 - root - INFO -   → Recommending higher IQR multiplier (1.8)
+2026-05-22 06:53:43,460 - root - INFO -   → Found 2 highly skewed columns
+2026-05-22 06:53:43,460 - root - INFO -   → Recommending LOG TRANSFORM
+2026-05-22 06:53:43,460 - root - INFO - ✓ PHASE 1 Complete
+2026-05-22 06:53:43,461 - root - INFO -   Reports: diagnostic_report.csv (CSV only - optimized)
+2026-05-22 06:53:43,462 - root - INFO -   Visualizations: boxplots.png, histograms.png
+2026-05-22 06:53:43,464 - run_manager - INFO - ✓ Saved config: outputs\runs\run_20260522_065331_default\config.yaml
+2026-05-22 06:53:43,464 - root - INFO - 
+======================================================================
+2026-05-22 06:53:43,464 - root - INFO - PHASE 2: EXECUTION PIPELINE
+2026-05-22 06:53:43,464 - root - INFO - ======================================================================
+2026-05-22 06:53:43,467 - processing - INFO - ==================================================
+2026-05-22 06:53:43,467 - processing - INFO - PHASE 2: EXECUTION PIPELINE
+2026-05-22 06:53:43,468 - processing - INFO - ==================================================
+2026-05-22 06:53:43,468 - processing - INFO - Step 1: Log Transform (add_constant=1.0)...
+2026-05-22 06:53:43,471 - processing - INFO - Applied log transform to 7 columns
+2026-05-22 06:53:43,472 - processing - INFO - Step 2: Handle Outliers (IQR, action=clip)...
+2026-05-22 06:53:43,486 - processing - INFO - Found and clipd outliers in 6 columns
+2026-05-22 06:53:43,486 - processing - INFO - Step 3: Scaling & Normalization (minmax)...
+2026-05-22 06:53:43,486 - processing - INFO - Scaled 9 columns with minmax
+2026-05-22 06:53:43,486 - processing - INFO - Step 4: KNN Imputation (n_neighbors=5)...
+2026-05-22 06:53:44,645 - processing - INFO - Imputed missing values: 5022 -> 0
+2026-05-22 06:53:44,645 - processing - INFO - Processing pipeline complete!
+2026-05-22 06:53:44,645 - processing - INFO - Final shape: (5546, 11)
+2026-05-22 06:53:44,645 - processing - INFO - Missing values: 0
+2026-05-22 06:53:44,735 - root - INFO - ✓ Saved: outputs\runs\run_20260522_065331_default\dataset_final.csv
+2026-05-22 06:53:44,735 - root - INFO -   Size: 0.87 MB
+2026-05-22 06:53:44,735 - processing - INFO - Scaler saved to outputs\runs\run_20260522_065331_default\scaler_model.pkl
+2026-05-22 06:53:44,735 - root - INFO - ✓ Saved: outputs\runs\run_20260522_065331_default\scaler_model.pkl
+2026-05-22 06:53:44,735 - root - INFO - ✓ Saved: outputs\runs\run_20260522_065331_default\processing_metadata.json
+2026-05-22 06:53:44,742 - root - INFO - 
+--------------------------------------------------
+2026-05-22 06:53:44,742 - root - INFO - Generating transformation visualizations...
+2026-05-22 06:53:44,746 - processing - INFO - Generating KDE Before/After plots...
+2026-05-22 06:53:48,372 - processing - INFO - Saved: kde_before_after_transform.png
+2026-05-22 06:53:48,374 - processing - INFO - Generating 100% Stacked Bar Chart for year 2024...
+2026-05-22 06:53:48,856 - processing - INFO - Saved: probability_stacked_bars.png
+2026-05-22 06:53:48,856 - root - INFO - --------------------------------------------------
+2026-05-22 06:53:48,856 - root - INFO - ✓ PHASE 2 Complete
+2026-05-22 06:53:48,856 - root - INFO -   Final shape: (5546, 11)
+2026-05-22 06:53:48,864 - root - INFO -   Missing values: 0
+2026-05-22 06:53:48,864 - root - INFO - 
+======================================================================
+2026-05-22 06:53:48,864 - root - INFO - PHASE 3: TREE-BASED MODELING EXPERIMENT
+2026-05-22 06:53:48,864 - root - INFO - ======================================================================
+2026-05-22 06:53:48,864 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,864 - tree_modeler - INFO - PHASE 3: TREE-BASED MODELING & FEATURE IMPORTANCE EXPERIMENT
+2026-05-22 06:53:48,864 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,864 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,864 - tree_modeler - INFO - SCENARIO 1: HUẤN LUYỆN VỚI DỮ LIỆU KHUYẾT THIẾU (RAW NAN)
+2026-05-22 06:53:48,870 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,877 - tree_modeler - INFO - Đang thử nghiệm fit mô hình Random Forest trực tiếp với NaN...
+2026-05-22 06:53:48,878 - tree_modeler - ERROR - 🚨 MÔ HÌNH BỊ CRASH THÀNH CÔNG! Loại lỗi: [ValueError]
+2026-05-22 06:53:48,879 - tree_modeler - ERROR - Chi tiết lỗi hệ thống: Input y contains NaN.
+2026-05-22 06:53:48,879 - tree_modeler - WARNING - => KẾT LUẬN: Thuật toán Random Forest của scikit-learn không chấp nhận dữ liệu rỗng.
+2026-05-22 06:53:48,880 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,880 - tree_modeler - INFO - SCENARIO 2: XỬ LÝ SAI CÁCH (DATA LEAKAGE & DIỀN BÙ BIẾN TARGET Y)
+2026-05-22 06:53:48,880 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:48,881 - tree_modeler - INFO - Thực hiện lỗi sai kinh điển: Điền bù số Mean cho toàn bộ bảng bao gồm cả cột Target Y...
+2026-05-22 06:53:51,835 - tree_modeler - INFO - ✓ Mô hình chạy thông qua thành công nhờ lấp liếm dữ liệu.
+2026-05-22 06:53:51,835 - tree_modeler - INFO - 📊 Kết quả đánh giá 'Ảo': R2 Score = 0.7941
+2026-05-22 06:53:51,835 - tree_modeler - WARNING - => KẾT LUẬN: Điểm số cao là do rò rỉ dữ liệu (Data Leakage). Mô hình đã biết trước phân phối tổng.
+2026-05-22 06:53:51,835 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:51,835 - tree_modeler - INFO - SCENARIO 3: TIỀN XỬ LÝ CHUẨN MLOPS (XÓA Y, CHIA TRAIN/TEST, KNN IMPUTE X)
+2026-05-22 06:53:51,835 - tree_modeler - INFO - ============================================================
+2026-05-22 06:53:51,847 - tree_modeler - INFO - Step 1: Đã xóa 191 hàng khuyết thiếu biến mục tiêu 'GDPC_2015'.
+2026-05-22 06:53:51,850 - tree_modeler - INFO - Step 2: Phân tách dữ liệu: Tập Train (4284 rows) | Tập Test (1071 rows).
+2026-05-22 06:53:51,851 - tree_modeler - INFO - Step 3: Khởi tạo KNN Imputer (k=5). Tiến hành huấn luyện bộ điền bù trên tập Train...
+2026-05-22 06:53:52,615 - tree_modeler - INFO - ✓ Quá trình nội suy dữ liệu khuyết thiếu cho các chỉ số vĩ mô (X) hoàn tất trung thực.
+2026-05-22 06:53:52,615 - tree_modeler - INFO - Step 4: Khởi chạy mô hình Random Forest Regressor (100 cây)...
+2026-05-22 06:53:55,568 - tree_modeler - INFO - 📊 KẾT QUẢ ĐÁNH GIÁ THỰC TẾ: R2 Score = 0.8886 | RMSE = 6756.63 USD
+2026-05-22 06:53:55,568 - tree_modeler - INFO - Đang tạo biểu đồ Feature Importance...
+2026-05-22 06:53:55,985 - tree_modeler - INFO - ✓ Đã lưu file đồ thị đóng góp thuộc tính tại: outputs\runs\run_20260522_065331_default\rf_feature_importance.png
+2026-05-22 06:53:55,994 - tree_modeler - INFO - All Tree-based Phase 3 modeling scenarios executed successfully!
+2026-05-22 06:53:55,994 - root - INFO - ✓ PHASE 3 Complete
+2026-05-22 06:53:55,994 - root - INFO -   Visualizations: rf_feature_importance.png
+2026-05-22 06:53:56,001 - run_manager - INFO - ✓ Saved run summary: outputs\runs\run_20260522_065331_default\run_summary.json
+2026-05-22 06:53:56,036 - run_manager - INFO - ✓ Updated latest directory: outputs\latest
+2026-05-22 06:53:56,036 - root - INFO - 
+======================================================================
+2026-05-22 06:53:56,036 - root - INFO - 🎉 PIPELINE EXECUTION COMPLETE
+2026-05-22 06:53:56,036 - root - INFO - ======================================================================
+2026-05-22 06:53:56,038 - root - INFO - 
+📂 Run Directory: outputs\runs\run_20260522_065331_default
+2026-05-22 06:53:56,038 - root - INFO - 
+📋 Generated Files:
+2026-05-22 06:53:56,038 - root - INFO -   ✓ boxplots.png                            76.46 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ config.yaml                                612 B
+2026-05-22 06:53:56,038 - root - INFO -   ✓ correlation_heatmap.png                 97.54 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ dataset_final.csv                      891.50 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ dataset_merged.csv                     704.59 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ diagnostic_report.csv                    1.29 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ histogram_with_kde.png                 375.84 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ histograms.png                          92.02 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ kde_before_after_transform.png         551.02 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ missing_values_by_feature_by_year.png    258.38 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ missing_values_by_year.png              37.70 KB
+2026-05-22 06:53:56,038 - root - INFO -   ✓ pairwise_scatter.png                     1.03 MB
+2026-05-22 06:53:56,043 - root - INFO -   ✓ probability_stacked_bars.png            48.93 KB
+2026-05-22 06:53:56,043 - root - INFO -   ✓ processing_metadata.json                 1.24 KB
+2026-05-22 06:53:56,044 - root - INFO -   ✓ rf_feature_importance.png               71.14 KB
+2026-05-22 06:53:56,044 - root - INFO -   ✓ run_summary.json                           864 B
+2026-05-22 06:53:56,044 - root - INFO -   ✓ scaler_model.pkl                         1.02 KB
+2026-05-22 06:53:56,044 - root - INFO - 
+📝 Logs Files:
+2026-05-22 06:53:56,044 - root - INFO -   ✓ data_integration.log                     2.81 KB
+2026-05-22 06:53:56,045 - root - INFO -   ✓ diagnostics.log                          1.59 KB
+2026-05-22 06:53:56,045 - root - INFO -   ✓ pipeline.log                            15.85 KB
+2026-05-22 06:53:56,045 - root - INFO -   ✓ processing.log                           1.60 KB
+2026-05-22 06:53:56,045 - root - INFO -   ✓ tree_modeler.log                         3.57 KB
+2026-05-22 06:53:56,046 - root - INFO - 
+======================================================================
+2026-05-22 06:53:56,046 - root - INFO - 📁 Latest run: outputs\latest
+2026-05-22 06:53:56,047 - root - INFO - 📊 Use outputs/latest/dataset_final.csv for ML models!
+2026-05-22 06:53:56,047 - root - INFO - ======================================================================
+2026-05-22 06:53:56,047 - root - INFO - 
+📚 ALL RUNS:
+
+2026-05-22 06:53:56,047 - root - INFO -   1. DEFAULT              | 20260522_065331 | 4.19 MB
+2026-05-22 06:53:56,057 - root - INFO -   2. DEFAULT              | 20260512_104524 | 4.11 MB
+2026-05-22 06:53:56,065 - root - INFO -   3. DEFAULT              | 20260512_103900 | 4.11 MB

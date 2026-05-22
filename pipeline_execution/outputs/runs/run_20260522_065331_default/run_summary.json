@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-05-22T06:53:55.994750",
+  "run_info": {
+    "run_name": "run_20260522_065331_default",
+    "timestamp": "20260522_065331",
+    "scenario": "default",
+    "files": {
+      "config": true,
+      "dataset_merged": true,
+      "dataset_final": true,
+      "diagnostic_report_csv": true,
+      "diagnostic_report_json": false,
+      "boxplots": true,
+      "histograms": true,
+      "scaler_model": true,
+      "processing_metadata": true,
+      "run_summary": false
+    },
+    "total_size_mb": 4.18,
+    "path": "outputs\\runs\\run_20260522_065331_default"
+  },
+  "summary": {
+    "scenario": "default",
+    "merged_shape": [
+      5546,
+      11
+    ],
+    "final_shape": [
+      5546,
+      11
+    ],
+    "phases_completed": [
+      "PHASE 0",
+      "PHASE 1",
+      "PHASE 2",
+      "PHASE 3"
+    ]
+  }
+}

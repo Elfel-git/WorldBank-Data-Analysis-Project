@@ -1,0 +1,31 @@
+2026-05-22 07:07:06,574 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,578 - tree_modeler - INFO - PHASE 3: TREE-BASED MODELING & FEATURE IMPORTANCE EXPERIMENT
+2026-05-22 07:07:06,578 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,578 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,578 - tree_modeler - INFO - SCENARIO 1: HUẤN LUYỆN VỚI DỮ LIỆU KHUYẾT THIẾU (RAW NAN)
+2026-05-22 07:07:06,579 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,581 - tree_modeler - INFO - Đang thử nghiệm fit mô hình Random Forest trực tiếp với NaN...
+2026-05-22 07:07:06,583 - tree_modeler - ERROR - 🚨 MÔ HÌNH BỊ CRASH THÀNH CÔNG! Loại lỗi: [ValueError]
+2026-05-22 07:07:06,583 - tree_modeler - ERROR - Chi tiết lỗi hệ thống: Input y contains NaN.
+2026-05-22 07:07:06,583 - tree_modeler - WARNING - => KẾT LUẬN: Thuật toán Random Forest của scikit-learn không chấp nhận dữ liệu rỗng.
+2026-05-22 07:07:06,583 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,583 - tree_modeler - INFO - SCENARIO 2: XỬ LÝ SAI CÁCH (DATA LEAKAGE & DIỀN BÙ BIẾN TARGET Y)
+2026-05-22 07:07:06,584 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:06,584 - tree_modeler - INFO - Thực hiện lỗi sai kinh điển: Điền bù số Mean cho toàn bộ bảng bao gồm cả cột Target Y...
+2026-05-22 07:07:09,190 - tree_modeler - INFO - ✓ Mô hình chạy thông qua thành công nhờ lấp liếm dữ liệu.
+2026-05-22 07:07:09,190 - tree_modeler - INFO - 📊 Kết quả đánh giá 'Ảo': R2 Score = 0.7941
+2026-05-22 07:07:09,190 - tree_modeler - WARNING - => KẾT LUẬN: Điểm số cao là do rò rỉ dữ liệu (Data Leakage). Mô hình đã biết trước phân phối tổng.
+2026-05-22 07:07:09,194 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:09,194 - tree_modeler - INFO - SCENARIO 3: TIỀN XỬ LÝ CHUẨN MLOPS (XÓA Y, CHIA TRAIN/TEST, KNN IMPUTE X)
+2026-05-22 07:07:09,194 - tree_modeler - INFO - ============================================================
+2026-05-22 07:07:09,197 - tree_modeler - INFO - Step 1: Đã xóa 191 hàng khuyết thiếu biến mục tiêu 'GDPC_2015'.
+2026-05-22 07:07:09,201 - tree_modeler - INFO - Step 2: Phân tách dữ liệu: Tập Train (4284 rows) | Tập Test (1071 rows).
+2026-05-22 07:07:09,201 - tree_modeler - INFO - Step 3: Khởi tạo KNN Imputer (k=5). Tiến hành huấn luyện bộ điền bù trên tập Train...
+2026-05-22 07:07:09,970 - tree_modeler - INFO - ✓ Quá trình nội suy dữ liệu khuyết thiếu cho các chỉ số vĩ mô (X) hoàn tất trung thực.
+2026-05-22 07:07:09,974 - tree_modeler - INFO - Step 4: Khởi chạy mô hình Random Forest Regressor (100 cây)...
+2026-05-22 07:07:12,981 - tree_modeler - INFO - 📊 KẾT QUẢ ĐÁNH GIÁ THỰC TẾ: R2 Score = 0.8886 | RMSE = 6756.63 USD
+2026-05-22 07:07:12,981 - tree_modeler - INFO - Đang tạo biểu đồ Feature Importance...
+2026-05-22 07:07:13,427 - tree_modeler - INFO - ✓ Đã lưu file đồ thị đóng góp thuộc tính tại: outputs\runs\run_20260522_070651_default\rf_feature_importance.png
+2026-05-22 07:07:13,434 - tree_modeler - INFO - Đang tạo biểu đồ so sánh 3 kịch bản...
+2026-05-22 07:07:13,704 - tree_modeler - INFO - ✓ Đã lưu biểu đồ so sánh kịch bản tại: outputs\runs\run_20260522_070651_default\scenario_comparison.png
+2026-05-22 07:07:13,704 - tree_modeler - INFO - All Tree-based Phase 3 modeling scenarios executed successfully!

@@ -39,6 +39,7 @@ from run_manager import RunManager
 from logger_setup import LoggerSetup
 
 from transformation_viz import TransformationVisualizer
+from tree_modeler import TreeModeler
 
 import pandas as pd
 import yaml
@@ -150,6 +151,8 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
         log_file='processing.log'
     )
 
+    df_raw_backup = df.copy()  # Backup dữ liệu gốc để so sánh sau này trong visualization
+
     # Create processor
     processor = DataProcessor(df, logger=module_logger)
     
@@ -199,35 +202,15 @@ def run_phase_2(df: pd.DataFrame, config: dict, run_dir: Path, logger: logging.L
     logger.info("\n" + "-"*50)
     logger.info("Generating transformation visualizations...")
     try:
+        from transformation_viz import TransformationVisualizer
         # Lọc ra các cột numeric đại diện cho features (loại bỏ cột thời gian)
         numeric_cols = processed_df.select_dtypes(include=[np.number]).columns.tolist()
         for time_col in ['Year', 'year']:
             if time_col in numeric_cols:
                 numeric_cols.remove(time_col)
 
-
-        raw_csv_path = run_dir / 'dataset_merged.csv'
-        if not raw_csv_path.exists():
-            # Nếu trong run_dir không có, tìm ở thư mục latest
-            raw_csv_path = Path('./outputs/latest/dataset_merged.csv')
-            
-        if raw_csv_path.exists():
-            df_absolutely_raw = pd.read_csv(raw_csv_path)
-            logger.info("Successfully reloaded absolute raw data from disk for visualization.")
-        else:
-            raise FileNotFoundError("Cannot find dataset_merged.csv for visualization. Make sure it was saved in phase 0.")
-        
-        final_path = run_dir / 'dataset_final.csv'
-        if not final_path.exists():
-            final_path = Path('./outputs/latest/dataset_final.csv')
-
-        if final_path.exists():
-            df_transformed = pd.read_csv(final_path)
-            logger.info("Successfully reloaded transformed data from disk for visualization.")
-        else:            raise FileNotFoundError("Cannot find dataset_final.csv for visualization. Make sure it was saved in phase 2.")
-
         viz = TransformationVisualizer(
-            df_raw=df_absolutely_raw,
+            df_raw=df_raw_backup,
             df_transformed=processed_df,
             numeric_cols=numeric_cols,
             custom_logger=module_logger
@@ -291,12 +274,15 @@ def main(scenario_name: str = 'default'):
         # PHASE 2
         processed_df = run_phase_2(merged_df, draft_config, run_dir, logger, logger_setup)
         
+        # PHASE 3
+        run_phase_3(merged_df, run_dir, logger, logger_setup)
+
         # Save run summary
         summary = {
             'scenario': scenario_name,
             'merged_shape': list(merged_df.shape),
             'final_shape': list(processed_df.shape),
-            'phases_completed': ['PHASE 0', 'PHASE 1', 'PHASE 2'],
+            'phases_completed': ['PHASE 0', 'PHASE 1', 'PHASE 2', 'PHASE 3'],
         }
         run_manager.save_run_summary(run_dir, summary)
         
@@ -489,6 +475,32 @@ def run_phase_1_standalone(
         logging.getLogger(__name__).error(f"\n❌ ERROR (phase1): {e}", exc_info=True)
         return False
 
+def run_phase_3(df: pd.DataFrame, run_dir: Path, logger: logging.Logger, logger_setup: LoggerSetup):
+    """PHASE 3: Tree-based Modeling & Feature Importance"""
+    logger.info("\n" + "="*70)
+    logger.info("PHASE 3: TREE-BASED MODELING EXPERIMENT")
+    logger.info("="*70)
+    
+    # Setup module logger for tree modeling
+    module_logger = logger_setup.get_module_logger(
+        'tree_modeler',
+        log_file='tree_modeler.log'
+    )
+    
+    try:
+        # LƯU Ý QUAN TRỌNG: 
+        # Chúng ta truyền 'df' (chính là merged_df từ Phase 0 chưa qua xử lý NaN) 
+        # để class TreeModeler có thể diễn thực tế kịch bản 1 (bị crash do NaN).
+        tree_pipeline = TreeModeler(df=df, target_col='GDPC_2015', custom_logger=module_logger)
+        
+        # Chạy toàn bộ kịch bản và xuất ảnh trực tiếp ra run_dir
+        tree_pipeline.run_all_scenarios(output_folder=run_dir)
+        
+        logger.info(f"✓ PHASE 3 Complete")
+        logger.info(f"  Visualizations: rf_feature_importance.png")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to run Tree-based Modeling: {e}", exc_info=True)
 
 def parse_cli_args() -> argparse.Namespace:
     """Parse CLI args for separate phase execution."""
@@ -541,3 +553,4 @@ if __name__ == '__main__':
         )
 
     sys.exit(0 if success else 1)
+

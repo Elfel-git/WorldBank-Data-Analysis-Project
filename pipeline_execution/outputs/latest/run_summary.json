@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-05-01T12:21:01.004213",
+  "timestamp": "2026-05-22T07:07:13.704839",
   "run_info": {
-    "run_name": "run_20260501_122048_default",
-    "timestamp": "20260501_122048",
+    "run_name": "run_20260522_070651_default",
+    "timestamp": "20260522_070651",
     "scenario": "default",
     "files": {
       "config": true,
@@ -16,23 +16,24 @@
       "processing_metadata": true,
       "run_summary": false
     },
-    "total_size_mb": 3.74,
-    "path": "outputs\\runs\\run_20260501_122048_default"
+    "total_size_mb": 4.23,
+    "path": "outputs\\runs\\run_20260522_070651_default"
   },
   "summary": {
     "scenario": "default",
     "merged_shape": [
-      5586,
+      5546,
       11
     ],
     "final_shape": [
-      5586,
+      5546,
       11
     ],
     "phases_completed": [
       "PHASE 0",
       "PHASE 1",
-      "PHASE 2"
+      "PHASE 2",
+      "PHASE 3"
     ]
   }
 }
